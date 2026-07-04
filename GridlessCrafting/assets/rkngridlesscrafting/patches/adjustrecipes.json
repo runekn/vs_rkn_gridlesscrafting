@@ -1,3 +1,10 @@
 [
-    { "file": "game:recipes/grid/slabs/plankslabs", "op": "addmerge", "path": "/attributes", "value": {"craftingSurface": true} }
+    { "file": "game:recipes/grid/slabs/plankslabs", "op": "replace", "path": "/ingredientPattern", "value": "PPH" },
+    { "file": "game:recipes/grid/slabs/plankslabs", "op": "addmerge", "path": "/ingredients/-", "value": { "H": { "type": "item", "tags": ["tool-hammer"], "isTool": true } } },
+
+    { "file": "game:recipes/grid/planks", "op": "replace", "path": "/ingredientPattern", "value": "PP_,PPH" },
+    { "file": "game:recipes/grid/planks", "op": "addmerge", "path": "/ingredients/-", "value": { "H": { "type": "item", "tags": ["tool-hammer"], "isTool": true } } },
+
+    { "file": "game:recipes/grid/stairs/plankstairs", "op": "replace", "path": "/ingredientPattern", "value": "PH,PP" },
+    { "file": "game:recipes/grid/stairs/plankstairs", "op": "addmerge", "path": "/ingredients/-", "value": { "H": { "type": "item", "tags": ["tool-hammer"], "isTool": true } } }
 ]

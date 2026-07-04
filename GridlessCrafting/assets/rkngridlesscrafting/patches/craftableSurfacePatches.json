@@ -1,3 +1,10 @@
 [
-    { "file": "game:blocktypes/wood/table", "op": "addmerge", "path": "/attributes", "value": {"craftingSurface": true} }
+    {
+		"file": "game:blocktypes/wood/table*",
+		"op": "addmerge",
+		"path": "/behaviors/-",
+		"value": {
+			"name": "rkngridlesscrafting.craftingsurface"
+		}
+	}
 ]

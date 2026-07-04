@@ -1,5 +1,6 @@
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 
 namespace RKN.GridlessCrafting;
 
@@ -11,13 +12,22 @@ public class BlockBehaviorCraftingSurface : BlockBehavior
 
     public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref EnumHandling handling)
     {
-        return true;
-        /*ICoreClientAPI? clientApi = world.Api as ICoreClientAPI;
-        if (clientApi != null && clientApi.Input.IsHotKeyPressed("rkngridlesscrafting.start"))
+        if (blockSel.Face != BlockFacing.UP)
         {
-            (clientApi.World.GetBlock(new AssetLocation("rkngridlesscrafting:crafting")) as BlockCrafting).TryPlace(byEntity, blockSel, slot);
-            handling = EnumHandling.PreventSubsequent;
+            return true;
         }
-        return true;*/
+        ICoreClientAPI? clientApi = world.Api as ICoreClientAPI;
+        if (clientApi == null || !clientApi.Input.IsHotKeyPressed("rkngridlesscrafting.start"))
+        {
+            return true;
+        }
+        clientApi.Network.GetChannel("rkngridlesscrafting").SendPacket(new CreateCraftingBlockMessage() { Position = blockSel.Position });
+        handling = EnumHandling.PreventSubsequent;
+        return false; // Prevent server message as we will do that ourself
+    }
+
+    public void TryPlaceCrafting(IWorldAccessor world, IPlayer byPlayer, BlockPos blockPos)
+    {
+        (world.GetBlock(new AssetLocation("rkngridlesscrafting:crafting")) as BlockCrafting).TryPlace(byPlayer, blockPos, byPlayer.InventoryManager.ActiveHotbarSlot);
     }
 }
