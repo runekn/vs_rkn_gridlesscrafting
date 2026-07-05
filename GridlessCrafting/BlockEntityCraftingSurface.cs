@@ -1,13 +1,9 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
@@ -37,7 +33,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     public override void Initialize(ICoreAPI api)
     {
         base.Initialize(api);
-        if (validRecipes != null)
+        if (validRecipes != null && validRecipes.Count > 0)
         {
             // Don't persist selected recipe after server restart
             // TODO: will this desync on chunk reload?
