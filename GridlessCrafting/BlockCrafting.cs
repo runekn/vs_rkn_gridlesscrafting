@@ -18,10 +18,10 @@ public class BlockCrafting : Block
             return;
         }
         api.World.BlockAccessor.SetBlock(Id, abovePos);
-        BlockEntityCrafting? blockEntity = api.World.BlockAccessor.GetBlockEntity<BlockEntityCrafting>(abovePos);
+        BlockEntityCraftingSurface? blockEntity = api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(abovePos);
         if (blockEntity == null)
         {
-            api.Logger.Error("[rkngridlesscrafting] Crafting block did not spawn with BlockEntityCrafting!");
+            api.Logger.Error("[rkngridlesscrafting] Crafting block did not spawn with BlockEntityCraftingSurface!");
             api.World.BlockAccessor.BreakBlock(abovePos, null);
             return;
         }
@@ -35,7 +35,7 @@ public class BlockCrafting : Block
 
     public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
     {
-        BlockEntityCrafting? be = GetBE(world, blockSel.Position);
+        BlockEntityCraftingSurface? be = GetBE(world, blockSel.Position);
         if (be == null)
         {
             return base.OnBlockInteractStart(world, byPlayer, blockSel);
@@ -57,7 +57,7 @@ public class BlockCrafting : Block
 
     public override bool OnBlockInteractStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
     {
-        BlockEntityCrafting? be = GetBE(world, blockSel.Position);
+        BlockEntityCraftingSurface? be = GetBE(world, blockSel.Position);
         if (be == null)
         {
             return base.OnBlockInteractStep(secondsUsed, world, byPlayer, blockSel);
@@ -71,7 +71,7 @@ public class BlockCrafting : Block
     
     public override void OnBlockInteractStop(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
     {
-        BlockEntityCrafting? be = GetBE(world, blockSel.Position);
+        BlockEntityCraftingSurface? be = GetBE(world, blockSel.Position);
         if (be == null)
         {
             base.OnBlockInteractStop(secondsUsed, world, byPlayer, blockSel);
@@ -111,12 +111,12 @@ public class BlockCrafting : Block
         }
     }
 
-    private static BlockEntityCrafting? GetBE(IWorldAccessor world, BlockPos blockPos)
+    private static BlockEntityCraftingSurface? GetBE(IWorldAccessor world, BlockPos blockPos)
     {
         if (blockPos == null)
         {
             return null;
         }
-        return world.BlockAccessor.GetBlockEntity(blockPos) as BlockEntityCrafting;
+        return world.BlockAccessor.GetBlockEntity(blockPos) as BlockEntityCraftingSurface;
     }
 }

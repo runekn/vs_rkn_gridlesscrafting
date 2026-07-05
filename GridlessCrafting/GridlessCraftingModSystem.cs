@@ -17,7 +17,7 @@ public class GridlessCraftingModSystem : ModSystem
         base.Start(api);
         this.api = api;
         api.RegisterBlockClass(Mod.Info.ModID + ".craftingblock", typeof(BlockCrafting));
-        api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingblock", typeof(BlockEntityCrafting));
+        api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingblock", typeof(BlockEntityCraftingSurface));
         api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockBehaviorCraftingSurface));
         var harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll();
@@ -48,7 +48,7 @@ public class GridlessCraftingModSystem : ModSystem
 
     public void OnSelectNextRecipeMessage(IServerPlayer fromPlayer, SelectNextRecipeMessage message)
     {
-        api.World.BlockAccessor.GetBlockEntity<BlockEntityCrafting>(message.Position).SelectNextRecipe();
+        api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(message.Position).SelectNextRecipe();
     }
 
     public void OnCreateCraftingBlockMessage(IPlayer fromPlayer, CreateCraftingBlockMessage message)

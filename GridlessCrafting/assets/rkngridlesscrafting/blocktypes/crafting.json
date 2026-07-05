@@ -2,20 +2,19 @@
 	"code": "crafting",
     "class": "rkngridlesscrafting.craftingblock",
 	"entityClass": "rkngridlesscrafting.craftingblock",
-	"shape": { "base": "game:block/glass/framed" },
-	"blockmaterial": "Wood",
 	"replaceable": 900,
 	"resistance": 1.0,
-	"lightAbsorption": 1,
+	"lightAbsorption": 0,
 	"sidesolid": {
 		"all": false
 	},	
 	"sideopaque": {
 		"all": false
 	},
-	"textures": {
-		"material": { "base": "game:block/glass/plain" }
-	},
 	"materialDensity": 400,
-	"drops": []
+	"drops": [],
+	"collisionbox": null,
+	"selectionbox": {
+		"x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 0.375, "z2": 1
+	}
 }

@@ -17,7 +17,7 @@ public class BlockBehaviorCraftingSurface : BlockBehavior
             return true;
         }
         ICoreClientAPI? clientApi = world.Api as ICoreClientAPI;
-        if (clientApi == null || !clientApi.Input.IsHotKeyPressed("rkngridlesscrafting.start"))
+        if (clientApi == null || !clientApi.Input.IsHotKeyPressed("rkngridlesscrafting.start") || byPlayer.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool != null)
         {
             return true;
         }

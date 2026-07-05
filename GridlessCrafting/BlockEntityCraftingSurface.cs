@@ -13,42 +13,47 @@ using Vintagestory.GameContent;
 
 namespace RKN.GridlessCrafting;
 
-public class BlockEntityCrafting : BlockEntity
+public class BlockEntityCraftingSurface : BlockEntityDisplay
 {
+
+    private int slotCount = 9;
     private InventoryGeneric inventory;
+
+    public override InventoryBase Inventory { get { return inventory; }}
+    public override string InventoryClassName { get { return "crafting"; }}
 
     private int selectedRecipe = -1;
     private List<int>? validRecipes;
     private IPlayer? craftingPlayer;
     private EnumCraftingAnimation? craftingAnimation;
     private float timeoutTimer;
-    private long tickListenerId;
     private float secondsLastCraft;
 
-    public BlockEntityCrafting()
+    public BlockEntityCraftingSurface()
     {
-        inventory = new InventoryGeneric(9, "crafting", "0", null, null);
+        inventory = new InventoryGeneric(slotCount, "crafting", "0", null, null);
     }
 
     public override void Initialize(ICoreAPI api)
     {
         base.Initialize(api);
-        inventory.LateInitialize("crafting-" + Pos.ToString(), api);
         if (validRecipes != null)
         {
             // Don't persist selected recipe after server restart
             // TODO: will this desync on chunk reload?
             selectedRecipe = validRecipes[0];
         }
-        if (Api.Side == EnumAppSide.Server)
-        {
-            tickListenerId = RegisterGameTickListener(OnTimeoutTick, 1000);
-        }
+    }
+
+    public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
+    {
+        base.OnTesselation(mesher, tessThreadTesselator);
+        return true; // Prevent default cube from being rendered
     }
 
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder sb)
     {
-        base.GetBlockInfo(forPlayer, sb);
+        //base.GetBlockInfo(forPlayer, sb); // Just food perish stuff
         foreach (ItemSlot itemSlot in inventory)
         {
             if (itemSlot.Empty)
@@ -84,11 +89,6 @@ public class BlockEntityCrafting : BlockEntity
     public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
     {
         base.FromTreeAttributes(tree, worldForResolving);
-        ITreeAttribute treeAttribute = tree.GetTreeAttribute("inventory");
-        if (treeAttribute != null)
-        {
-            inventory.FromTreeAttributes(treeAttribute);
-        }
         timeoutTimer = tree.GetFloat("timeoutTimer");
         selectedRecipe = tree.GetInt("selectedRecipe", -1);
         IAttribute validRecipesAttribute = tree["validRecipes"];
@@ -101,9 +101,6 @@ public class BlockEntityCrafting : BlockEntity
     public override void ToTreeAttributes(ITreeAttribute tree)
     {
         base.ToTreeAttributes(tree);
-        TreeAttribute inventoryTree = new();
-        inventory.ToTreeAttributes(inventoryTree);
-        tree["inventory"] = inventoryTree;
         tree.SetFloat("timeoutTimer", timeoutTimer);
         tree.SetInt("selectedRecipe", selectedRecipe);
         if (validRecipes != null)
@@ -112,169 +109,80 @@ public class BlockEntityCrafting : BlockEntity
         }
     }
 
-    public override void OnBlockBroken(IPlayer? byPlayer = null)
+    protected override float[][] genTransformationMatrices()
     {
-        base.OnBlockBroken(byPlayer);
-        if (Api != null && Api.Side == EnumAppSide.Server)
-        {
-            inventory.DropAll(Pos.ToVec3d().Add(0.5, 0.5, 0.5), 0);
-        }
-    }
+        float[][] tfMatrices = new float[slotCount][];
 
-    public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
-    {
-        ICoreClientAPI? capi = Api as ICoreClientAPI;
-        for (int i = 0; i < inventory.Count; i++)
+        for (int index = 0; index < slotCount; index++)
         {
-            ItemSlot slot = inventory[i];
-            if (slot?.Itemstack == null || slot.Itemstack.StackSize == 0)
+            float x = 0;
+            float z = 0;
+            float s = 0.30f;
+            if (index == 0)
             {
-                continue;
+                x = 0.5f;
+                z = 0.5f;
             }
-            ItemStack itemstack = slot.Itemstack;
-            MeshData? meshData = null;
-            if (itemstack.Class == EnumItemClass.Block)
+            else if (index == 1)
             {
-                meshData = capi.TesselatorManager.GetDefaultBlockMesh(itemstack.Block).Clone();
+                x = 0.2f;
+                z = 0.2f;
+                s = s * 0.95f;
             }
-            else
+            else if (index == 2)
             {
-                IContainedMeshSource containedMeshSource = itemstack.Collectible?.GetCollectibleInterface<IContainedMeshSource>();
-                if (containedMeshSource != null)
-                {
-                    meshData = containedMeshSource.GenMesh(slot, capi.BlockTextureAtlas, Pos);
-                }
+                x = 0.8f;
+                z = 0.8f;
+                s = s * 1.02f;
             }
-            if (meshData == null)
+            else if (index == 3)
             {
-                continue;
+                x = 0.8f;
+                z = 0.2f;
+                s = s * 1.02f;
             }
-            meshData.Scale(0.25f, 0.25f, 0.25f);
-            MeshSurfaceTranslate(meshData, i);
-            BottomCenterMesh(meshData);
-            mesher.AddMeshData(meshData);
-        }
-        return true;
-    }
+            else if (index == 4)
+            {
+                x = 0.2f;
+                z = 0.8f;
+                s = s * 1.02f;
+            }
+            else if (index == 5)
+            {
+                x = 0.5f;
+                z = 0.2f;
+                s = s * 1.02f;
+            }
+            else if (index == 6)
+            {
+                x = 0.2f;
+                z = 0.5f;
+                s = s * 1.02f;
+            }
+            else if (index == 7)
+            {
+                x = 0.5f;
+                z = 0.9f;
+                s = s * 1.02f;
+            }
+            else if (index == 8)
+            {
+                x = 0.9f;
+                z = 0.5f;
+                s = s * 1.02f;
+            }
 
-    private void MeshSurfaceTranslate(MeshData meshData, int slot)
-    {
-        if (meshData.VerticesCount == 0)
-        {
-            return;
+            tfMatrices[index] =
+                new Matrixf()
+                .Scale(s, s, s)
+                .Translate(-0.5f, 0, -0.5f)
+                .RotateYDeg(Block.Shape.rotateY)
+                .Translate(x / s, 0, z / s)
+                .Values
+            ;
         }
-        /*Random random = new();
-        meshData.Translate((random.NextSingle() - 0.5f) % 0.5f, 0, (random.NextSingle() - 0.5f) % 0.5f);*/
-        if (slot == 1)
-        {
-            meshData.Translate(0.3f, 0, 0.3f);
-            meshData.Scale(0.95f, 0.95f, 0.95f);
-        }
-        else if (slot == 2)
-        {
-            meshData.Translate(-0.3f, 0, 0.3f);
-            meshData.Scale(1.05f, 1.05f, 1.05f);
-        }
-        else if (slot == 3)
-        {
-            meshData.Translate(-0.3f, 0, -0.3f);
-            meshData.Scale(1.02f, 1.02f, 1.02f);
-        }
-        else if (slot == 4)
-        {
-            meshData.Translate(0.3f, 0, -0.3f);
-            meshData.Scale(0.98f, 0.98f, 0.98f);
-        }
-        else if (slot == 5)
-        {
-            meshData.Translate(0.3f, 0, 0);
-            meshData.Scale(0.90f, 0.90f, 0.90f);
-        }
-        else if (slot == 6)
-        {
-            meshData.Translate(0, 0, 0.3f);
-            meshData.Scale(1.02f, 1.02f, 1.02f);
-        }
-        else if (slot == 7)
-        {
-            meshData.Translate(-0.3f, 0, 0);
-            meshData.Scale(0.93f, 0.93f, 0.93f);
-        }
-        else if (slot == 8)
-        {
-            meshData.Translate(0, 0, -0.3f);
-            meshData.Scale(1.04f, 1.04f, 1.04f);
-        }
-    }
 
-    private float[] NormalizeSize(float[] size)
-    {
-        float num = size[0];
-        if (size[1] > num)
-        {
-            num = size[1];
-        }
-        if (size[2] > num)
-        {
-            num = size[2];
-        }
-        if (num <= 0.0001f)
-        {
-            return new float[3] { 1f, 1f, 1f };
-        }
-        return new float[3]
-        {
-            size[0] / num,
-            size[1] / num,
-            size[2] / num
-        };
-    }
-
-    private void BottomCenterMesh(MeshData mesh)
-    {
-        if (mesh.VerticesCount <= 0)
-        {
-            return;
-        }
-        GetMeshBounds(mesh, out Vec3f min, out Vec3f max);
-        mesh.Translate(new Vec3f(0, -min.Y, 0));
-    }
-
-    private static void GetMeshBounds(MeshData mesh, out Vec3f min, out Vec3f max)
-    {
-        min = new Vec3f(float.MaxValue, float.MaxValue, float.MaxValue);
-        max = new Vec3f(float.MinValue, float.MinValue, float.MinValue);
-        for (int i = 0; i < mesh.VerticesCount; i++)
-        {
-            int num = i * 3;
-            float num2 = mesh.xyz[num];
-            float num3 = mesh.xyz[num + 1];
-            float num4 = mesh.xyz[num + 2];
-            if (num2 < min.X)
-            {
-                min.X = num2;
-            }
-            if (num3 < min.Y)
-            {
-                min.Y = num3;
-            }
-            if (num4 < min.Z)
-            {
-                min.Z = num4;
-            }
-            if (num2 > max.X)
-            {
-                max.X = num2;
-            }
-            if (num3 > max.Y)
-            {
-                max.Y = num3;
-            }
-            if (num4 > max.Z)
-            {
-                max.Z = num4;
-            }
-        }
+        return tfMatrices;
     }
 
     public bool IsCrafting(IPlayer byPlayer)
@@ -415,8 +323,9 @@ public class BlockEntityCrafting : BlockEntity
         }
     }
 
-    public void OnTimeoutTick(float dt)
+    protected override void OnTick(float dt)
     {
+        base.OnTick(dt);
         timeoutTimer += dt;
         if(timeoutTimer >= 120)
         {
