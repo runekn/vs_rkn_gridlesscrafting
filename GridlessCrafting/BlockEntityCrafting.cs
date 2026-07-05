@@ -27,7 +27,7 @@ public class BlockEntityCrafting : BlockEntity
 
     public BlockEntityCrafting()
     {
-        inventory = new InventoryGeneric(9, "crafting", "0", null, null);
+        inventory = new InventoryGeneric(9, "craftingsurface", "0", null, null);
     }
 
     public override void Initialize(ICoreAPI api)

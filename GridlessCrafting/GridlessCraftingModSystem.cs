@@ -16,9 +16,9 @@ public class GridlessCraftingModSystem : ModSystem
     {
         base.Start(api);
         this.api = api;
-        api.RegisterBlockClass(Mod.Info.ModID + ".craftingblock", typeof(BlockCrafting));
-        api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingblock", typeof(BlockEntityCraftingSurface));
-        api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockBehaviorCraftingSurface));
+        api.RegisterBlockClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockCrafting));
+        api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockEntityCraftingSurface));
+        api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(BlockBehaviorSpawnCraftingSurface));
         var harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll();
         api.Logger.Debug("[gridlesscrafting] Hello world!");
@@ -53,7 +53,7 @@ public class GridlessCraftingModSystem : ModSystem
 
     public void OnCreateCraftingBlockMessage(IPlayer fromPlayer, CreateCraftingBlockMessage message)
     {
-        api.World.BlockAccessor.GetBlock(message.Position).GetBehavior<BlockBehaviorCraftingSurface>().TryPlaceCrafting(api.World, fromPlayer, message.Position);
+        api.World.BlockAccessor.GetBlock(message.Position).GetBehavior<BlockBehaviorSpawnCraftingSurface>().TryPlaceCrafting(api.World, fromPlayer, message.Position);
     }
 
     public void OnCraftingStoppedMessage(CraftingStoppedMessage message)

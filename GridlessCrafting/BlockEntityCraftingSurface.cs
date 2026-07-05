@@ -16,7 +16,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     private InventoryGeneric inventory;
 
     public override InventoryBase Inventory { get { return inventory; }}
-    public override string InventoryClassName { get { return "crafting"; }}
+    public override string InventoryClassName { get { return "craftingsurface"; }}
 
     private int selectedRecipe = -1;
     private List<int>? validRecipes;
@@ -27,7 +27,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
 
     public BlockEntityCraftingSurface()
     {
-        inventory = new InventoryGeneric(slotCount, "crafting", "0", null, null);
+        inventory = new InventoryGeneric(slotCount, "craftingsurface", "0", null, null);
     }
 
     public override void Initialize(ICoreAPI api)

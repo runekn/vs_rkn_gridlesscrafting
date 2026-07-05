@@ -4,9 +4,9 @@ using Vintagestory.API.MathTools;
 
 namespace RKN.GridlessCrafting;
 
-public class BlockBehaviorCraftingSurface : BlockBehavior
+public class BlockBehaviorSpawnCraftingSurface : BlockBehavior
 {
-    public BlockBehaviorCraftingSurface(Block block) : base(block)
+    public BlockBehaviorSpawnCraftingSurface(Block block) : base(block)
     {
     }
 
@@ -28,6 +28,6 @@ public class BlockBehaviorCraftingSurface : BlockBehavior
 
     public void TryPlaceCrafting(IWorldAccessor world, IPlayer byPlayer, BlockPos blockPos)
     {
-        (world.GetBlock(new AssetLocation("rkngridlesscrafting:crafting")) as BlockCrafting).TryPlace(byPlayer, blockPos, byPlayer.InventoryManager.ActiveHotbarSlot);
+        (world.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCrafting).TryPlace(byPlayer, blockPos, byPlayer.InventoryManager.ActiveHotbarSlot);
     }
 }
