@@ -3,7 +3,7 @@
     "class": "rkngridlesscrafting.craftingsurface",
 	"entityClass": "rkngridlesscrafting.craftingsurface",
 	"replaceable": 900,
-	"resistance": 1.0,
+	"resistance": 0.2,
 	"lightAbsorption": 0,
 	"sidesolid": {
 		"all": false

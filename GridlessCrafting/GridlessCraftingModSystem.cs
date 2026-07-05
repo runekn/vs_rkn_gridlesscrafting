@@ -1,4 +1,4 @@
-﻿using System;
+﻿using GridlessCrafting;
 using HarmonyLib;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -19,6 +19,7 @@ public class GridlessCraftingModSystem : ModSystem
         api.RegisterBlockClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockCrafting));
         api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockEntityCraftingSurface));
         api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(BlockBehaviorSpawnCraftingSurface));
+        api.RegisterCollectibleBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(CollectibleBehaviorSpawnCraftingSurface));
         var harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll();
         api.Logger.Debug("[gridlesscrafting] Hello world!");
@@ -46,6 +47,23 @@ public class GridlessCraftingModSystem : ModSystem
         InitCatalog();
     }
 
+    public override void AssetsFinalize(ICoreAPI api)
+    {
+        foreach (CollectibleObject collectible in api.World.Collectibles)
+        {
+            if (collectible.Code == null ||
+                collectible.Id == 0 ||
+                (collectible.ItemClass != EnumItemClass.Item && collectible.ItemClass != EnumItemClass.Block) || 
+                (collectible is Item item && item.Tool != null) || 
+                collectible.HasBehavior<CollectibleBehaviorSpawnCraftingSurface>())
+            {
+                continue;
+            }
+            CollectibleBehaviorSpawnCraftingSurface instance = new CollectibleBehaviorSpawnCraftingSurface(collectible);
+            collectible.CollectibleBehaviors.Append(instance); // TODO: this isn't working...
+        }
+    }
+
     public void OnSelectNextRecipeMessage(IServerPlayer fromPlayer, SelectNextRecipeMessage message)
     {
         api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(message.Position).SelectNextRecipe();
@@ -53,7 +71,7 @@ public class GridlessCraftingModSystem : ModSystem
 
     public void OnCreateCraftingBlockMessage(IPlayer fromPlayer, CreateCraftingBlockMessage message)
     {
-        api.World.BlockAccessor.GetBlock(message.Position).GetBehavior<BlockBehaviorSpawnCraftingSurface>().TryPlaceCrafting(api.World, fromPlayer, message.Position);
+        (api.World.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCrafting).TryPlace(fromPlayer, message.Position, fromPlayer.InventoryManager.ActiveHotbarSlot);
     }
 
     public void OnCraftingStoppedMessage(CraftingStoppedMessage message)

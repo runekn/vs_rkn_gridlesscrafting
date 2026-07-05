@@ -21,13 +21,12 @@ public class BlockBehaviorSpawnCraftingSurface : BlockBehavior
         {
             return true;
         }
+        bool r = (world.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCrafting).TryPlace(byPlayer, blockSel.Position, byPlayer.InventoryManager.ActiveHotbarSlot);
+        if (!r) {
+            return true;
+        }
         clientApi.Network.GetChannel("rkngridlesscrafting").SendPacket(new CreateCraftingBlockMessage() { Position = blockSel.Position });
         handling = EnumHandling.PreventSubsequent;
         return false; // Prevent server message as we will do that ourself
-    }
-
-    public void TryPlaceCrafting(IWorldAccessor world, IPlayer byPlayer, BlockPos blockPos)
-    {
-        (world.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCrafting).TryPlace(byPlayer, blockPos, byPlayer.InventoryManager.ActiveHotbarSlot);
     }
 }

@@ -1,5 +1,5 @@
 [
-    {
+	{
 		"file": "game:blocktypes/wood/table",
 		"op": "addmerge",
 		"path": "/behaviors/-",

@@ -27,7 +27,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
 
     public BlockEntityCraftingSurface()
     {
-        inventory = new InventoryGeneric(slotCount, "craftingsurface", "0", null, null);
+        inventory = new InventoryDisplayed(this, slotCount, "craftingsurface-0", null);
     }
 
     public override void Initialize(ICoreAPI api)
@@ -43,6 +43,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
 
     public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
     {
+        //MarkMeshesDirty(); // TODO: Do something better
         base.OnTesselation(mesher, tessThreadTesselator);
         return true; // Prevent default cube from being rendered
     }
@@ -114,59 +115,18 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             float x = 0;
             float z = 0;
             float s = 0.30f;
-            if (index == 0)
+            (x, z, s) = index switch
             {
-                x = 0.5f;
-                z = 0.5f;
-            }
-            else if (index == 1)
-            {
-                x = 0.2f;
-                z = 0.2f;
-                s = s * 0.95f;
-            }
-            else if (index == 2)
-            {
-                x = 0.8f;
-                z = 0.8f;
-                s = s * 1.02f;
-            }
-            else if (index == 3)
-            {
-                x = 0.8f;
-                z = 0.2f;
-                s = s * 1.02f;
-            }
-            else if (index == 4)
-            {
-                x = 0.2f;
-                z = 0.8f;
-                s = s * 1.02f;
-            }
-            else if (index == 5)
-            {
-                x = 0.5f;
-                z = 0.2f;
-                s = s * 1.02f;
-            }
-            else if (index == 6)
-            {
-                x = 0.2f;
-                z = 0.5f;
-                s = s * 1.02f;
-            }
-            else if (index == 7)
-            {
-                x = 0.5f;
-                z = 0.9f;
-                s = s * 1.02f;
-            }
-            else if (index == 8)
-            {
-                x = 0.9f;
-                z = 0.5f;
-                s = s * 1.02f;
-            }
+                0 => (0.5f, 0.5f, s),
+                1 => (0.2f, 0.2f, s * 0.95f),
+                2 => (0.8f, 0.8f, s * 1.02f),
+                3 => (0.8f, 0.2f, s * 1.02f),
+                4 => (0.2f, 0.8f, s * 1.02f),
+                5 => (0.5f, 0.2f, s * 1.02f),
+                6 => (0.2f, 0.5f, s * 1.01f),
+                7 => (0.9f, 0.5f, s * 0.97f),
+                8 => (0.5f, 0.9f, s * 0.98f),
+            };
 
             tfMatrices[index] =
                 new Matrixf()
@@ -263,10 +223,6 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     public bool TryPutIngredient(ItemSlot slot, IPlayer byPlayer)
     {
         timeoutTimer = 0;
-        if (Api.Side != EnumAppSide.Server)
-        {
-            return false;
-        }
         if (slot.Itemstack?.Item?.Tool != null)
         {
             return false;
@@ -286,16 +242,20 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
                 }
                 slot.MarkDirty();
 
-                (List<ItemSlot>? items, ItemSlot? _, ItemSlot? _) = GetCraftingItems(byPlayer);
-                List<int> recipes = RecipeCatalog.GetValidRecipesWithoutTools(items);
-                validRecipes = recipes;
-                selectedRecipe = -1;
-                if (recipes.Count > 0)
+                if (Api.Side == EnumAppSide.Server)
                 {
-                    selectedRecipe = validRecipes[0];
+                    (List<ItemSlot>? items, ItemSlot? _, ItemSlot? _) = GetCraftingItems(byPlayer);
+                    List<int> recipes = RecipeCatalog.GetValidRecipesWithoutTools(items);
+                    validRecipes = recipes;
+                    selectedRecipe = -1;
+                    if (recipes.Count > 0)
+                    {
+                        selectedRecipe = validRecipes[0];
+                    }
                 }
 
                 MarkDirty(true, null);
+                MarkMeshesDirty();
                 return true;
             }
         }

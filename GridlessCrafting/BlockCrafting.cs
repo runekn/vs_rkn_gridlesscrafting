@@ -9,13 +9,13 @@ namespace RKN.GridlessCrafting;
 public class BlockCrafting : Block
 {
 
-    public void TryPlace(IPlayer byPlayer, BlockPos blockPos, ItemSlot slot)
+    public bool TryPlace(IPlayer byPlayer, BlockPos blockPos, ItemSlot slot)
     {
         api.Logger.Debug("[gridlesscrafting] Trying to place crafting block at " + blockPos.ToString());
         BlockPos abovePos = blockPos.UpCopy(1);
         if (api.World.BlockAccessor.GetBlock(abovePos).Replaceable < 6000)
         {
-            return;
+            return false;
         }
         api.World.BlockAccessor.SetBlock(Id, abovePos);
         BlockEntityCraftingSurface? blockEntity = api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(abovePos);
@@ -23,14 +23,15 @@ public class BlockCrafting : Block
         {
             api.Logger.Error("[rkngridlesscrafting] Crafting block did not spawn with BlockEntityCraftingSurface!");
             api.World.BlockAccessor.BreakBlock(abovePos, null);
-            return;
+            return false;
         }
         if (!blockEntity.TryPutIngredient(byPlayer.InventoryManager.ActiveHotbarSlot, byPlayer))
         {
             api.Logger.Error("[rkngridlesscrafting] Could not put initial items into newly spawned crafting block!");
             api.World.BlockAccessor.BreakBlock(abovePos, null);
-            return;
+            return false;
         }
+        return true;
     }
 
     public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
