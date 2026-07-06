@@ -64,6 +64,22 @@ public class GridlessCraftingModSystem : ModSystem
         }
     }*/
 
+    public void OnSelectNextRecipeMessage(IServerPlayer fromPlayer, SelectNextRecipeMessage message)
+    {
+        api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(message.Position).SelectNextRecipe();
+    }
+
+    public void OnCreateCraftingBlockMessage(IPlayer fromPlayer, CreateCraftingBlockMessage message)
+    {
+        (api.World.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCrafting).TryPlace(fromPlayer, message.Position, fromPlayer.InventoryManager.ActiveHotbarSlot);
+    }
+
+    public void OnCraftingStoppedMessage(CraftingStoppedMessage message)
+    {
+        IPlayer player = (api as ICoreClientAPI).World.Player;
+        player.Entity.AnimManager.StopAnimation(PlayerAnimationRequest.ToAnimationCode(message.animation));
+    }
+
     public void InitCatalog()
     {
         RecipeCatalog.Initialize(api);
