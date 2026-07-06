@@ -1,6 +1,6 @@
 using ProtoBuf;
 
-namespace RKN.GridlessCrafting;
+namespace RKN.GridlessCrafting.Network;
 
 [ProtoContract]
 public class CraftingStoppedMessage

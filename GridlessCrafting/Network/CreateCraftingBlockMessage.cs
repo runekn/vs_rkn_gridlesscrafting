@@ -1,7 +1,7 @@
 using ProtoBuf;
 using Vintagestory.API.MathTools;
 
-namespace RKN.GridlessCrafting;
+namespace RKN.GridlessCrafting.Network;
 
 [ProtoContract]
 public class CreateCraftingBlockMessage

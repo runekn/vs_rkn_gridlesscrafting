@@ -1,3 +1,4 @@
+using RKN.GridlessCrafting.Network;
 using System;
 using System.Data;
 using Vintagestory.API.Client;
@@ -43,7 +44,7 @@ public class BlockCrafting : Block
         }
         if (api.Side == EnumAppSide.Client && (api as ICoreClientAPI).Input.IsHotKeyPressed("rkngridlesscrafting.start"))
         {
-            (api as ICoreClientAPI).Network.GetChannel("rkngridlesscrafting").SendPacket(new SelectNextRecipeMessage() { Position = blockSel.Position });
+            GridlessCraftingNetwork.SelectNextRecipe(blockSel.Position);
             return false;
         }
         ItemSlot activeHotbarSlot = byPlayer.InventoryManager.ActiveHotbarSlot;

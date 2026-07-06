@@ -1,3 +1,4 @@
+using RKN.GridlessCrafting.Network;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -193,7 +194,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
                 EnumCraftingAnimation enumCraftingAnimation = GetCraftingAnimation();
                 ResetState();
                 selectedRecipe = -1;
-                (Api as ICoreServerAPI).Network.GetChannel("rkngridlesscrafting").SendPacket(new CraftingStoppedMessage() {animation = enumCraftingAnimation}, [(byPlayer as IServerPlayer)]);
+                GridlessCraftingNetwork.StopCraftingAnimation(craftingPlayer, enumCraftingAnimation);
                 return new PlayerAnimationRequest(enumCraftingAnimation, EnumAnimationAction.STOP);
             }
             MarkDirty(true, null);
