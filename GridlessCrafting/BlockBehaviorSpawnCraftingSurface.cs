@@ -21,12 +21,13 @@ public class BlockBehaviorSpawnCraftingSurface : BlockBehavior
         {
             return true;
         }
-        bool r = (world.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCrafting).TryPlace(byPlayer, blockSel.Position, byPlayer.InventoryManager.ActiveHotbarSlot);
+        // TODO: Causes crash when spawning with block as initial ingredient. Because default action is not being prevented, and it when fails with NPE because block is already removed.
+        /*bool r = (world.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCrafting).TryPlace(byPlayer, blockSel.Position, byPlayer.InventoryManager.ActiveHotbarSlot);
         if (!r) {
             return true;
-        }
+        }*/
         clientApi.Network.GetChannel("rkngridlesscrafting").SendPacket(new CreateCraftingBlockMessage() { Position = blockSel.Position });
         handling = EnumHandling.PreventSubsequent;
-        return false; // Prevent server message as we will do that ourself
+        return false; // Prevent default server message as we have done that ourselves
     }
 }
