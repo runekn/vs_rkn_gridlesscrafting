@@ -1,3 +1,4 @@
+using GridlessCrafting;
 using RKN.GridlessCrafting.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -8,25 +9,31 @@ namespace RKN.GridlessCrafting.Entities;
 public class BlockCraftingSurface : Block
 {
 
-    public bool TryPlace(IPlayer byPlayer, BlockPos blockPos, ItemSlot slot)
+    public static bool TryPlace(ICoreAPI api, IPlayer byPlayer, BlockPos blockPos, ItemSlot slot)
     {
-        api.Logger.Debug("[gridlesscrafting] Trying to place crafting block at " + blockPos.ToString());
+        BlockCraftingSurface? block = api.World.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCraftingSurface;
+        if (block == null)
+        {
+            api.GCLogger().Error("Crafting block did not spawn with BlockEntityCraftingSurface!");
+            return false;
+        }
+        api.GCLogger().Debug("Trying to place crafting block at " + blockPos.ToString());
         BlockPos abovePos = blockPos.UpCopy(1);
         if (api.World.BlockAccessor.GetBlock(abovePos).Replaceable < 6000)
         {
             return false;
         }
-        api.World.BlockAccessor.SetBlock(Id, abovePos);
+        api.World.BlockAccessor.SetBlock(block.Id, abovePos);
         BlockEntityCraftingSurface? blockEntity = api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(abovePos);
         if (blockEntity == null)
         {
-            api.Logger.Error("[rkngridlesscrafting] Crafting block did not spawn with BlockEntityCraftingSurface!");
+            api.GCLogger().Error("Crafting block did not spawn with BlockEntityCraftingSurface!");
             api.World.BlockAccessor.BreakBlock(abovePos, null);
             return false;
         }
         if (!blockEntity.TryPutIngredient(byPlayer.InventoryManager.ActiveHotbarSlot, byPlayer))
         {
-            api.Logger.Error("[rkngridlesscrafting] Could not put initial items into newly spawned crafting block!");
+            api.GCLogger().Error("Could not put initial items into newly spawned crafting block!");
             api.World.BlockAccessor.BreakBlock(abovePos, null);
             return false;
         }
@@ -40,9 +47,9 @@ public class BlockCraftingSurface : Block
         {
             return base.OnBlockInteractStart(world, byPlayer, blockSel);
         }
-        if (api.Side == EnumAppSide.Client && (api as ICoreClientAPI).Input.IsHotKeyPressed("rkngridlesscrafting.start"))
+        if (api.Side == EnumAppSide.Client && (api as ICoreClientAPI).Input.IsHoldingCraftingButton())
         {
-            api.GridlessCraftingNetwork().SelectNextRecipe(blockSel.Position);
+            api.GCNetwork().SelectNextRecipe(blockSel.Position);
             return false;
         }
         ItemSlot activeHotbarSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
@@ -100,7 +107,7 @@ public class BlockCraftingSurface : Block
             return;
         }
         string anim = PlayerAnimationRequest.ToAnimationCode(request.Animation);
-        api.Logger.Debug("[gridlesscrafting] Animation change {0} {1} ", [request.Action, anim]);
+        api.GCLogger().Debug("Animation change {0} {1} ", [request.Action, anim]);
         if (request.Action == EnumAnimationAction.START)
         {
             byPlayer.Entity.StartAnimation(anim);

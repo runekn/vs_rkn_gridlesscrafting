@@ -5,6 +5,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
+using GridlessCrafting;
 
 namespace RKN.GridlessCrafting;
 
@@ -28,7 +29,7 @@ public class GridlessCraftingModSystem : ModSystem
         api.RegisterCollectibleBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(CollectibleBehaviorSpawnCraftingSurface));
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll();
-        api.Logger.Debug("[gridlesscrafting] Hello world!");
+        api.GCLogger().Debug("Hello world!");
     }
 
     public override void StartClientSide(ICoreClientAPI api)

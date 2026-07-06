@@ -1,3 +1,4 @@
+using GridlessCrafting;
 using RKN.GridlessCrafting.Network;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -14,15 +15,15 @@ public class BlockBehaviorSpawnCraftingSurface(Block block) : BlockBehavior(bloc
             return true;
         }
         ICoreClientAPI? clientApi = world.Api as ICoreClientAPI;
-        if (clientApi == null || !clientApi.Input.IsHotKeyPressed("rkngridlesscrafting.start") || byPlayer.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool != null)
+        if (clientApi == null || !clientApi.Input.IsHoldingCraftingButton() || byPlayer.InventoryManager.ActiveHotbarSlot?.Itemstack?.Item?.Tool != null)
         {
             return true;
         }
-        bool r = (world.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCraftingSurface).TryPlace(byPlayer, blockSel.Position, byPlayer.InventoryManager.ActiveHotbarSlot);
+        bool r = BlockCraftingSurface.TryPlace(world.Api, byPlayer, blockSel.Position, byPlayer.InventoryManager.ActiveHotbarSlot);
         if (!r) {
             return true;
         }
-        world.Api.GridlessCraftingNetwork().SpawnCraftingSurface(blockSel.Position);
+        world.Api.GCNetwork().SpawnCraftingSurface(blockSel.Position);
         handling = EnumHandling.PreventSubsequent;
         // It would be better if I could return false to prevent default server message as we have done that ourselves.
         // But that will also enable default behavior to place block, which causes game to crash because we have now removed the block from inventory.

@@ -58,7 +58,7 @@ public class GridlessCraftingNetwork
 
     protected void OnCreateCraftingBlockMessage(IPlayer fromPlayer, CreateCraftingBlockMessage message)
     {
-        (api.World.GetBlock(new AssetLocation("rkngridlesscrafting:craftingsurface")) as BlockCraftingSurface).TryPlace(fromPlayer, message.Position, fromPlayer.InventoryManager.ActiveHotbarSlot);
+        BlockCraftingSurface.TryPlace(api, fromPlayer, message.Position, fromPlayer.InventoryManager.ActiveHotbarSlot);
     }
 
     public void StopCraftingAnimation(IPlayer craftingPlayer, EnumCraftingAnimation enumCraftingAnimation)
@@ -70,13 +70,5 @@ public class GridlessCraftingNetwork
     {
         IPlayer player = ClientApi.World.Player;
         player.Entity.AnimManager.StopAnimation(PlayerAnimationRequest.ToAnimationCode(message.animation));
-    }
-}
-
-public static class ApiNetworkExtension
-{
-    public static GridlessCraftingNetwork GridlessCraftingNetwork(this ICoreAPI api)
-    {
-        return api.ModLoader.GetModSystem<GridlessCraftingModSystem>().Network;
     }
 }

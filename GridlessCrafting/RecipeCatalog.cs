@@ -101,11 +101,3 @@ public class RecipeCatalog
         }
     }
 }
-
-public static class ApiCatalogExtension
-{
-    public static RecipeCatalog RecipeCatalog(this ICoreAPI api)
-    {
-        return api.ModLoader.GetModSystem<GridlessCraftingModSystem>().RecipeCatalog;
-    }
-}
