@@ -1,4 +1,5 @@
 ﻿using RKN.Crafting.Entities;
+using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -26,7 +27,9 @@ public class RknCraftingNetwork
         ClientChannel.RegisterMessageType<CreateCraftingBlockMessage>();
         ClientChannel.RegisterMessageType<CraftingStoppedMessage>();
         ClientChannel.RegisterMessageType<SelectNextRecipeMessage>();
+        ClientChannel.RegisterMessageType<RecipeConsumedMessage>();
         ClientChannel.SetMessageHandler<CraftingStoppedMessage>(OnCraftingStoppedMessage);
+        ClientChannel.SetMessageHandler<RecipeConsumedMessage>(OnRecipeConsumedMessage);
     }
 
     public RknCraftingNetwork(ICoreServerAPI api, string modId)
@@ -37,6 +40,7 @@ public class RknCraftingNetwork
         ServerChannel.RegisterMessageType<CreateCraftingBlockMessage>();
         ServerChannel.RegisterMessageType<CraftingStoppedMessage>();
         ServerChannel.RegisterMessageType<SelectNextRecipeMessage>();
+        ServerChannel.RegisterMessageType<RecipeConsumedMessage>();
         ServerChannel.SetMessageHandler<CreateCraftingBlockMessage>(OnCreateCraftingBlockMessage);
         ServerChannel.SetMessageHandler<SelectNextRecipeMessage>(OnSelectNextRecipeMessage);
     }
@@ -68,8 +72,20 @@ public class RknCraftingNetwork
 
     protected void OnCraftingStoppedMessage(CraftingStoppedMessage message)
     {
-        ClientApi.RCLogger().Debug("Received stop crafting message!");
+        api.RCLogger().Debug("Received stop crafting message!");
         IPlayer player = ClientApi.World.Player;
         player.Entity.AnimManager.StopAnimation(PlayerAnimationRequest.ToAnimationCode(message.animation));
+    }
+
+    public void RecipeConsumed(BlockPos pos)
+    {
+        api.RCLogger().Debug("Broadcasting recipe consumed message!");
+        ServerChannel.BroadcastPacket(new RecipeConsumedMessage() { Position = pos });
+    }
+
+    private void OnRecipeConsumedMessage(RecipeConsumedMessage packet)
+    {
+        api.RCLogger().Debug("Received recipe consumed message!");
+        BlockEntityCraftingSurface.OnRecipeConsumed(ClientApi, packet.Position);
     }
 }

@@ -33,6 +33,13 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         inventory = new InventoryDisplayed(this, slotCount, "craftingsurface-0", null);
     }
 
+    public static void OnRecipeConsumed(ICoreClientAPI api, BlockPos pos)
+    {
+        BlockEntityCraftingSurface entity = api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(pos);
+        entity.MarkMeshesDirty();
+        entity.MarkDirty(true);
+    }
+
     public override void Initialize(ICoreAPI api)
     {
         base.Initialize(api);
@@ -118,7 +125,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             float z = 0;
             float s = 0.30f;
             ItemSlot itemSlot = inventory[index];
-            if (!itemSlot.Empty)
+            if (!itemSlot.Empty && itemSlot.Itemstack.StackSize > 0)
             {
                 MeshData meshData = getMesh(itemSlot);
                 if (meshData != null)
@@ -207,6 +214,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         if (secondsUsed > (secondsLastCraft + GetCraftingTime()) && IsCrafting(byPlayer))
         {
             CreateOutput(world);
+            Api.RCNetwork().RecipeConsumed(Pos);
             
             // Continue crafting if possible
             (List<ItemSlot>? items, ItemSlot? primaryTool, ItemSlot? offhandTool) = GetCraftingItems(craftingPlayer);

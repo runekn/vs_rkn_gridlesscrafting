@@ -26,6 +26,7 @@ public class RknCraftingModSystem : ModSystem
         api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockEntityCraftingSurface));
         api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(BlockBehaviorSpawnCraftingSurface));
         api.RegisterCollectibleBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(CollectibleBehaviorSpawnCraftingSurface));
+        
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll();
         api.RCLogger().Debug("Hello world!");
