@@ -1,11 +1,13 @@
 using GridlessCrafting;
 using RKN.GridlessCrafting.Network;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace RKN.GridlessCrafting.Entities;
@@ -115,6 +117,16 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             float x = 0;
             float z = 0;
             float s = 0.30f;
+            ItemSlot itemSlot = inventory[index];
+            if (!itemSlot.Empty)
+            {
+                MeshData meshData = getMesh(itemSlot);
+                if (meshData != null)
+                {
+                    float itemSize = GetMeshXZSize(meshData);
+                    s = s / itemSize;
+                }
+            }
             (x, z, s) = index switch
             {
                 0 => (0.5f, 0.5f, s),
@@ -139,6 +151,23 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         }
 
         return tfMatrices;
+    }
+
+    private float GetMeshXZSize(MeshData mesh)
+    {
+        Vec3f min = new(float.MaxValue, 0, float.MaxValue);
+        Vec3f max = new(float.MinValue, 0, float.MinValue);
+        for (int i = 0; i < mesh.VerticesCount; i++)
+        {
+            int index = i * 3;
+            float x = mesh.xyz[index];
+            float z = mesh.xyz[index + 2];
+            min.X = Math.Min(min.X, x);
+            min.Z = Math.Min(min.Z, z);
+            max.X = Math.Max(max.X, x);
+            max.Z = Math.Max(max.Z, z);
+        }
+        return Math.Max(max.X - min.X, max.Z - min.Z);
     }
 
     public bool IsCrafting(IPlayer byPlayer)
