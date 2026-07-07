@@ -100,6 +100,48 @@ public class BlockCraftingSurface : Block
         base.OnNeighbourBlockChange(world, pos, neibpos);
     }
 
+    public override Cuboidf GetParticleBreakBox(IBlockAccessor blockAccess, BlockPos pos, BlockFacing facing)
+    {
+        return base.GetParticleBreakBox(blockAccess, pos, facing);
+    }
+
+    public override void OnBlockBroken(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
+    {
+        // Copy paste of base method, but without behavior delegation and spawning particles
+        if (EntityClass != null)
+        {
+            world.BlockAccessor.GetBlockEntity(pos)?.OnBlockBroken(byPlayer);
+        }
+        if (world.Side == EnumAppSide.Server && (byPlayer == null || byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative))
+        {
+            ItemStack[] drops = GetDrops(world, pos, byPlayer, dropQuantityMultiplier);
+            if (drops != null)
+            {
+                for (int i = 0; i < drops.Length; i++)
+                {
+                    if (SplitDropStacks)
+                    {
+                        for (int k = 0; k < drops[i].StackSize; k++)
+                        {
+                            ItemStack stack = drops[i].Clone();
+                            stack.StackSize = 1;
+                            world.SpawnItemEntity(stack, pos);
+                        }
+                    }
+                    else
+                    {
+                        world.SpawnItemEntity(drops[i].Clone(), pos);
+                    }
+                }
+            }
+            if (Sounds != null)
+            {
+                world.PlaySoundAt(Sounds.GetBreakSound(byPlayer), pos, 0.0, byPlayer);
+            }
+        }
+        world.BlockAccessor.SetBlock(0, pos);
+    }
+
     private void HandlePlayerAnimation(IPlayer byPlayer, PlayerAnimationRequest? request)
     {
         if (request == null)

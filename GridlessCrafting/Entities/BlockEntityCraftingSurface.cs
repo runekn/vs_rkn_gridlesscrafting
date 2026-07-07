@@ -320,41 +320,28 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
 
     private void ConsumeRecipe(GridRecipe recipe, List<ItemSlot> items, ItemSlot? primaryTool, ItemSlot? offhandTool, IWorldAccessor world)
     {
+        if (recipe.ResolvedIngredients == null)
+        {
+            return;
+        }
+        items = [.. items];
+        if (primaryTool != null) items.Add(primaryTool);
+        if (offhandTool != null) items.Add(offhandTool);
+        ItemSlot[] itemsArr = items.ToArray();
         foreach (CraftingRecipeIngredient? ingredient in recipe.ResolvedIngredients)
         {
             if (ingredient == null)
             {
                 continue;
             }
-            if (!ingredient.Consume)
+            foreach (ItemSlot slot in itemsArr)
             {
-                if (primaryTool != null && ingredient.ToolDurabilityCost > 0 && ingredient.SatisfiesAsIngredient(primaryTool.Itemstack, true))
+                if (slot.Empty || !ingredient.SatisfiesAsIngredient(slot.Itemstack, true))
                 {
-                    primaryTool.Itemstack.Collectible.DamageItem(world, craftingPlayer.Entity, primaryTool, ingredient.ToolDurabilityCost, ingredient.Break);
-                    primaryTool.MarkDirty();
                     continue;
                 }
-                else if (offhandTool != null && ingredient.ToolDurabilityCost > 0 && ingredient.SatisfiesAsIngredient(offhandTool.Itemstack, true))
-                {
-                    offhandTool.Itemstack.Collectible.DamageItem(world, craftingPlayer.Entity, offhandTool, ingredient.ToolDurabilityCost, ingredient.Break);
-                    offhandTool.MarkDirty();
-                    continue;
-                }
+                slot.Itemstack.Collectible.OnConsumedByCrafting(itemsArr, slot, recipe, ingredient, craftingPlayer, ingredient.Quantity);
             }
-            else
-            {
-                foreach (ItemSlot stack in items)
-                {
-                    if (stack.StackSize > 0 && ingredient.SatisfiesAsIngredient(stack.Itemstack, true))
-                    {
-                        stack.TakeOut(ingredient.Quantity);
-                        stack.MarkDirty();
-                        goto CONTINUE;
-                    }
-                }
-                return;
-            }
-            CONTINUE:;
         }
     }
 
