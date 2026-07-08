@@ -53,7 +53,7 @@ public class BlockCraftingSurface : Block
         ItemSlot activeHotbarSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
         if (activeHotbarSlot.Empty || activeHotbarSlot.Itemstack?.Item?.Tool != null)
         {
-            HandlePlayerAnimation(byPlayer, be.StartCrafting(world, byPlayer, this));
+            be.StartCrafting(world, byPlayer, this);
         } else {
             be.TryPutIngredient(activeHotbarSlot, byPlayer);
         }
@@ -69,7 +69,7 @@ public class BlockCraftingSurface : Block
         }
         if (be.IsCrafting(byPlayer))
         {
-            HandlePlayerAnimation(byPlayer, be.OnCraftingStep(secondsUsed, world, byPlayer, blockSel));
+            be.OnCraftingStep(secondsUsed, world, byPlayer, blockSel);
         }
         return true;
     }
@@ -84,7 +84,7 @@ public class BlockCraftingSurface : Block
         }
         if (be.IsCrafting(byPlayer))
         {
-            HandlePlayerAnimation(byPlayer, be.CancelCrafting(world, byPlayer, blockSel));
+            be.CancelCrafting(world, byPlayer, blockSel);
         }
     }
 
@@ -138,24 +138,6 @@ public class BlockCraftingSurface : Block
             }
         }
         world.BlockAccessor.SetBlock(0, pos);
-    }
-
-    private void HandlePlayerAnimation(IPlayer byPlayer, PlayerAnimationRequest? request)
-    {
-        if (request == null)
-        {
-            return;
-        }
-        string anim = PlayerAnimationRequest.ToAnimationCode(request.Animation);
-        api.RCLogger().Debug("Animation change {0} {1} ", [request.Action, anim]);
-        if (request.Action == EnumAnimationAction.START)
-        {
-            byPlayer.Entity.AnimManager.StartAnimation(anim);
-        }
-        else
-        {
-            byPlayer.Entity.StopAnimation(anim);
-        }
     }
 
     private static BlockEntityCraftingSurface? GetBE(IWorldAccessor world, BlockPos blockPos)

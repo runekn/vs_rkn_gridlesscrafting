@@ -1,4 +1,5 @@
-﻿using RKN.Crafting.Entities;
+﻿using RKN.Crafting.Animation;
+using RKN.Crafting.Entities;
 using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -65,7 +66,7 @@ public class RknCraftingNetwork
         BlockCraftingSurface.TryPlace(api, fromPlayer, message.Position, fromPlayer.InventoryManager.ActiveHotbarSlot);
     }
 
-    public void StopCraftingAnimation(IPlayer craftingPlayer, EnumCraftingAnimation enumCraftingAnimation)
+    public void StopCrafting(IPlayer craftingPlayer, EnumCraftingAnimation enumCraftingAnimation)
     {
         ServerChannel.SendPacket(new CraftingStoppedMessage() { animation = enumCraftingAnimation }, [(craftingPlayer as IServerPlayer)]);
     }
@@ -74,7 +75,7 @@ public class RknCraftingNetwork
     {
         api.RCLogger().Debug("Received stop crafting message!");
         IPlayer player = ClientApi.World.Player;
-        player.Entity.AnimManager.StopAnimation(PlayerAnimationRequest.ToAnimationCode(message.animation));
+        api.RCAnimator().StopCrafting(player, message.animation);
     }
 
     public void RecipeConsumed(BlockPos pos)

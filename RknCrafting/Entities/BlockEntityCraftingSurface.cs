@@ -1,10 +1,10 @@
+using RKN.Crafting.Animation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -184,33 +184,32 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         return craftingPlayer == byPlayer;
     }
 
-    public PlayerAnimationRequest? StartCrafting(IWorldAccessor world, IPlayer byPlayer, BlockCraftingSurface blockCrafting)
+    public void StartCrafting(IWorldAccessor world, IPlayer byPlayer, BlockCraftingSurface blockCrafting)
     {
         timeoutTimer = 0;
         if (craftingPlayer != null || selectedRecipe == -1)
         {
-            return null;
+            return;
         }
         (List<ItemSlot>? items, ItemSlot? primaryTool, ItemSlot? offhandTool) = GetCraftingItems(byPlayer);
         if (items == null || !Api.RCRecipeCatalog().MatchesRecipe(items, primaryTool, offhandTool, selectedRecipe))
         {
-            return null;
+            return;
         }
         craftingPlayer = byPlayer;
-        craftingAnimation = GetCraftingAnimation(selectedRecipe, primaryTool, offhandTool);
+        craftingAnimation = Api.RCAnimator().StartCrafting(byPlayer, selectedRecipe, primaryTool, offhandTool);
         Api.RCLogger().Debug("Crafting {0} by {1}!", [Api.RCRecipeCatalog().GetRecipeById(selectedRecipe).Name, craftingPlayer.PlayerName]);
         if (world.Api.Side == EnumAppSide.Server)
         {
             MarkDirty();
         }
-        return new PlayerAnimationRequest((EnumCraftingAnimation)craftingAnimation, EnumAnimationAction.START);;
     }
 
-    public PlayerAnimationRequest? OnCraftingStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+    public void OnCraftingStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
     {
         if (Api.Side != EnumAppSide.Server)
         {
-            return null;
+            return;
         }
         timeoutTimer = 0;
         if (secondsUsed > (secondsLastCraft + GetCraftingTime()) && IsCrafting(byPlayer))
@@ -230,15 +229,14 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             if (items == null || !Api.RCRecipeCatalog().MatchesRecipe(items, primaryTool, offhandTool, selectedRecipe))
             {
                 EnumCraftingAnimation enumCraftingAnimation = GetCraftingAnimation();
-                Api.RCNetwork().StopCraftingAnimation(craftingPlayer, enumCraftingAnimation);
+                Api.RCNetwork().StopCrafting(craftingPlayer, enumCraftingAnimation);
+                Api.RCAnimator().StopCrafting(craftingPlayer, enumCraftingAnimation);
                 ResetState();
                 selectedRecipe = -1;
-                return new PlayerAnimationRequest(enumCraftingAnimation, EnumAnimationAction.STOP);
             }
             MarkDirty(true, null);
             secondsLastCraft = secondsUsed;
         }
-        return null;
     }
 
     private float GetCraftingTime()
@@ -247,22 +245,22 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         return craftingBaseSeconds / craftingSpeedModifier;
     }
 
-    public PlayerAnimationRequest? CancelCrafting(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+    public void CancelCrafting(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
     {
         timeoutTimer = 0;
         if (craftingPlayer?.ClientId != byPlayer.ClientId)
         {
-            return null;
+            return;
         }
         Api.RCLogger().Debug("Cancelled crafting by {0}!", [craftingPlayer.PlayerName]);
         EnumCraftingAnimation anim = GetCraftingAnimation();
+        Api.RCAnimator().StopCrafting(byPlayer, anim);
         ResetState();
-        return new PlayerAnimationRequest(anim, EnumAnimationAction.STOP);
     }
 
     private EnumCraftingAnimation GetCraftingAnimation()
     {
-        return (EnumCraftingAnimation)(craftingAnimation == null ? EnumCraftingAnimation.HandsMixing : craftingAnimation);
+        return (EnumCraftingAnimation)(craftingAnimation == null ? EnumCraftingAnimation.HandsGeneric : craftingAnimation);
     }
 
     public bool TryPutIngredient(ItemSlot slot, IPlayer byPlayer)
@@ -395,31 +393,6 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         //result.Collectible.OnCreatedByCrafting(Array.Empty<ItemSlot>(), new DummySlot(result), gridRecipe);
         Api.World.SpawnItemEntity(gridRecipe.Output.ResolvedItemStack.Clone(), Pos);
         ConsumeRecipe(gridRecipe, items, primaryTool, offhandTool, world);
-    }
-
-    private EnumCraftingAnimation GetCraftingAnimation(int recipe, ItemSlot? primaryTool, ItemSlot? offhandTool)
-    {
-        if (primaryTool == null)
-        {
-            if (Api.RCRecipeCatalog().GetRecipeById(recipe).Output?.ResolvedItemStack?.Item?.Tool != null) {
-                return EnumCraftingAnimation.HandsTool;
-            }
-            return EnumCraftingAnimation.HandsMixing;
-        }
-        EnumTool? primary = primaryTool?.Itemstack?.Item?.Tool;
-        EnumTool? offhand = offhandTool?.Itemstack?.Item?.Tool;
-        return primary switch
-        {
-            EnumTool.Knife => EnumCraftingAnimation.Knife,
-            EnumTool.Axe => offhand == EnumTool.Hammer ? EnumCraftingAnimation.AxeHammer : EnumCraftingAnimation.Axe,
-            EnumTool.Hammer => EnumCraftingAnimation.Hammer,
-            EnumTool.Shears => EnumCraftingAnimation.Shears,
-            EnumTool.Saw => EnumCraftingAnimation.Saw,
-            EnumTool.Chisel => offhand == EnumTool.Hammer ? EnumCraftingAnimation.ChiselHammer : EnumCraftingAnimation.Chisel,
-            EnumTool.Club => EnumCraftingAnimation.Club,
-            _ => EnumCraftingAnimation.HandsMixing
-        };
-
     }
 
     private void ResetState()

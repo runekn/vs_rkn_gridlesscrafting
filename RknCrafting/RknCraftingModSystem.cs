@@ -5,6 +5,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
+using RKN.Crafting.Animation;
 
 namespace RKN.Crafting;
 
@@ -16,6 +17,7 @@ public class RknCraftingModSystem : ModSystem
 
     public RknCraftingNetwork Network { get; internal set; }
     public RecipeCatalog RecipeCatalog { get; internal set; }
+    public CraftingAnimator Animator{ get; internal set; }
 #pragma warning restore CS8618
 
     public override void Start(ICoreAPI api)
@@ -29,6 +31,7 @@ public class RknCraftingModSystem : ModSystem
         
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll();
+        Animator = new CraftingAnimator(api);
         api.RCLogger().Debug("Hello world!");
     }
 

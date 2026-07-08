@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using RKN.Crafting.Animation;
 using Vintagestory.API.MathTools;
 
 namespace RKN.Crafting.Network;
