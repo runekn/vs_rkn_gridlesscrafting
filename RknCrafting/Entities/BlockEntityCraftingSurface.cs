@@ -17,7 +17,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     private int slotCount = 9;
     private float craftingBaseSeconds = 1.0f;
     private InventoryGeneric inventory;
-    public float CraftingSpeedModifier { get; set; }
+    public float craftingSpeedModifier = 1.0f;
 
     public override InventoryBase Inventory { get { return inventory; }}
     public override string InventoryClassName { get { return "craftingsurface"; }}
@@ -50,7 +50,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             // TODO: will this desync on chunk reload?
             selectedRecipe = validRecipes[0];
         }
-        CraftingSpeedModifier = api.World.BlockAccessor.GetBlock(Pos.DownCopy(1)).GetBehavior<BlockBehaviorSpawnCraftingSurface>().CraftingSpeedModifier;
+        craftingSpeedModifier = api.World.BlockAccessor.GetBlock(Pos.DownCopy(1)).GetBehavior<BlockBehaviorSpawnCraftingSurface>().CraftingSpeedModifier;
     }
 
     public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
@@ -244,7 +244,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     private float GetCraftingTime()
     {
         // TODO: add recipe output modifier
-        return craftingBaseSeconds / CraftingSpeedModifier;
+        return craftingBaseSeconds / craftingSpeedModifier;
     }
 
     public PlayerAnimationRequest? CancelCrafting(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)

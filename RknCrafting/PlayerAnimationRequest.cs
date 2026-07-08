@@ -23,7 +23,7 @@ public class PlayerAnimationRequest : Tuple<EnumCraftingAnimation, EnumAnimation
         EnumCraftingAnimation.HandsTool    => "breakhand", // TODO
         EnumCraftingAnimation.Hammer => "hammerhit",
         EnumCraftingAnimation.Axe => "axechop",
-        EnumCraftingAnimation.AxeHammer => "axechop", // TODO
+        EnumCraftingAnimation.AxeHammer => "rkncrafting.axehammer",
         EnumCraftingAnimation.Saw => "saw",
         EnumCraftingAnimation.Shears => "shears",
         EnumCraftingAnimation.ChiselHammer => "hammerandchisel",
