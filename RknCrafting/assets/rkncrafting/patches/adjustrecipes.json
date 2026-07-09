@@ -22,7 +22,8 @@
       "H": {
         "type": "item",
         "tags": [ "tool-hammer" ],
-        "isTool": true
+        "isTool": true,
+        "toolDurabilityCost": 0
       }
     }
   },
@@ -50,7 +51,8 @@
       "H": {
         "type": "item",
         "tags": [ "tool-hammer" ],
-        "isTool": true
+        "isTool": true,
+        "toolDurabilityCost": 0
       }
     }
   },
@@ -71,7 +73,8 @@
       "H": {
         "type": "item",
         "tags": [ "tool-hammer" ],
-        "isTool": true
+        "isTool": true,
+        "toolDurabilityCost": 0
       }
     }
   }
