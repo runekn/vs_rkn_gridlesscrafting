@@ -1,13 +1,16 @@
-﻿using RKN.Crafting.Entities;
+﻿using HarmonyLib;
+using RKN.Crafting.Animation;
+using RKN.Crafting.Entities;
 using RKN.Crafting.Network;
-using HarmonyLib;
+using RKN.Crafting.Patches;
+using RknCrafting;
+using System;
+using System.Formats.Asn1;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
-using RKN.Crafting.Animation;
-using RknCrafting;
-using System;
+using Vintagestory.Client.NoObf;
 
 namespace RKN.Crafting;
 
@@ -31,10 +34,8 @@ public class RknCraftingModSystem : ModSystem
         api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockEntityCraftingSurface));
         api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(BlockBehaviorSpawnCraftingSurface));
         api.RegisterCollectibleBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(CollectibleBehaviorSpawnCraftingSurface));
-        
-        harmony = new Harmony(Mod.Info.ModID);
-        harmony.PatchAll();
         Animator = new CraftingAnimator(api);
+        ApplyHarmonyPatches();
 
         api.RCLogger().Debug("Hello world!");
     }
@@ -80,6 +81,31 @@ public class RknCraftingModSystem : ModSystem
             collectible.CollectibleBehaviors.Append(instance); // TODO: this isn't working...
         }
     }*/
+
+    private void ApplyHarmonyPatches()
+    {
+        // Use local config instead of server supplied one
+        RknCraftingConfig config = api.LoadModConfig<RknCraftingConfig>(Mod.Info.ModID + ".json");
+        if (config == null)
+        {
+            config = new RknCraftingConfig();
+        }
+
+        harmony = new Harmony(Mod.Info.ModID);
+        harmony.PatchAll();
+
+        if (config.DisableUICraftingGrid)
+        {
+            var original = typeof(GuiDialogInventory).DeclaredMethod("ComposeSurvivalInvDialog");
+            var prefix = typeof(GuiDialogInventoryPatch).DeclaredMethod("ComposeSurvivalInvDialogPrefix");
+            var original2 = typeof(GuiDialogInventory).DeclaredMethod("OnGuiClosed");
+            var prefix2 = typeof(GuiDialogInventoryPatch).DeclaredMethod("OnGuiClosedPrefix");
+
+            harmony.Patch(original, prefix: prefix);
+            harmony.Patch(original2, prefix: prefix2);
+        }
+
+    }
 
     private void TryLoadConfig()
     {

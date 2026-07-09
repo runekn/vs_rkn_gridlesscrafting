@@ -16,14 +16,9 @@ namespace RknCrafting.Patches;
 [HarmonyPatch(typeof(SystemRenderDecals), "AddBlockBreakDecal")]
 public class SystemRenderDecalsPatch
 {
-    static FieldInfo gameField = AccessTools.Field(typeof(SystemRenderDecals), "game");
-    static FieldInfo apiField = AccessTools.Field(typeof(ClientMain), "api");
-
-    static bool Prefix(BlockPos pos, int stage, ref object __result, SystemRenderDecals __instance)
+    static bool Prefix(BlockPos pos, int stage, ref object __result, ref ClientMain ___game, SystemRenderDecals __instance)
     {
-        ClientMain game = gameField.GetValue(__instance) as ClientMain;
-        ICoreClientAPI api = apiField.GetValue(game) as ICoreClientAPI;
-        if (api.World.BlockAccessor.GetBlock(pos) is BlockCraftingSurface)
+        if (___game.api.World.BlockAccessor.GetBlock(pos) is BlockCraftingSurface)
         {
             __result = null;
             return false;

@@ -23,6 +23,8 @@ public class RknCraftingConfig
     public float ConsecutiveCraftingTimeModifier = 0.95f;
     [ProtoMember(6)]
     public float ConsecutiveCraftingTimeModifierMin = 0.5f;
+    [ProtoMember(7)]
+    public bool DisableUICraftingGrid = true;
 
     public override string ToString()
     {
