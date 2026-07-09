@@ -23,7 +23,7 @@ public class CraftingAnimator
         // knifecut
         // chiselhit
         EnumCraftingAnimation.HandsGeneric => "rkncrafting.handsmixing",
-        EnumCraftingAnimation.HandsTool => "breakhand", // TODO
+        EnumCraftingAnimation.HandsTool => "rkncrafting.handsmixing", // TODO
         EnumCraftingAnimation.Hammer => "hammerhit",
         EnumCraftingAnimation.Axe => "axechop",
         EnumCraftingAnimation.AxeHammer => "rkncrafting.axehammer",

@@ -19,6 +19,10 @@ public class RknCraftingConfig
     public float BaseCraftingTimeSeconds = 1.0f;
     [ProtoMember(4)]
     public int AutoDeleteTimeSeconds = 120;
+    [ProtoMember(5)]
+    public float ConsecutiveCraftingTimeModifier = 0.95f;
+    [ProtoMember(6)]
+    public float ConsecutiveCraftingTimeModifierMin = 0.5f;
 
     public override string ToString()
     {

@@ -7,13 +7,13 @@ namespace RKN.Crafting.Entities;
 
 public class BlockBehaviorSpawnCraftingSurface(Block block) : BlockBehavior(block)
 {
-    private float craftingSpeedModifier = 1.0f;
-    public float CraftingSpeedModifier { get { return craftingSpeedModifier; } }
+    private float craftingTimeModifier = 1.0f;
+    public float CraftingTimeModifier { get { return craftingTimeModifier; } }
 
     public override void Initialize(JsonObject properties)
     {
         base.Initialize(properties);
-        craftingSpeedModifier = properties["craftingSpeedModifier"].AsFloat(1.0f);
+        craftingTimeModifier = properties["craftingTimeModifier"].AsFloat(1.0f);
     }
 
     public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref EnumHandling handling)

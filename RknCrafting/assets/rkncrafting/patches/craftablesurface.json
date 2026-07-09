@@ -7,7 +7,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 2
+					"craftingTimeModifier": 0.5
 				}
 			}
 		]
@@ -20,7 +20,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 0.9
+					"craftingTimeModifier": 1.1
 				}
 			}
 		]
@@ -33,7 +33,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 1.1
+					"craftingTimeModifier": 0.95
 				}
 			}
 		]
@@ -46,7 +46,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 1.3
+					"craftingTimeModifier": 0.8
 				}
 			}
 		]
@@ -59,7 +59,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 1.2
+					"craftingTimeModifier": 0.9
 				}
 			}
 		]
@@ -72,7 +72,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 1.3
+					"craftingTimeModifier": 0.7
 				}
 			}
 		]
@@ -85,7 +85,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 0.9
+					"craftingTimeModifier": 0.95
 				}
 			}
 		]
@@ -98,7 +98,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 2
+					"craftingTimeModifier": 0.5
 				}
 			}
 		]
@@ -111,7 +111,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 1.5
+					"craftingTimeModifier": 0.7
 				}
 			}
 		]
@@ -124,7 +124,7 @@
 			{
 				"name": "rkncrafting.spawncraftingsurface",
 				"properties": {
-					"craftingSpeedModifier": 1.3
+					"craftingTimeModifier": 0.8
 				}
 			}
 		]

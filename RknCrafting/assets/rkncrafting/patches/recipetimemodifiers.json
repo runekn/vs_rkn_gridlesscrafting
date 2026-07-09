@@ -1,0 +1,11 @@
+[
+  {
+    "file": "game:recipes/grid/tool/axe",
+    "side": "server",
+    "op": "addmerge",
+    "path": "/0/attributes",
+    "value": {
+      "craftingTimeModifier": 3
+    }
+  }
+]
