@@ -1,0 +1,110 @@
+[
+  {
+    "file": "game:entities/humanoid/player",
+    "op": "Add",
+    "path": "/client/animations/-",
+    "value": {
+      "code": "rkncrafting.axehammer",
+      "animation": "rkncrafting.axehammer",
+      "animationSpeed": 1.0,
+      "holdEyePosAfterEasein": 0,
+      "blendMode": "Add",
+      "easeInSpeed": 10.0,
+      "elementWeight": {
+        "UpperArmR": 20,
+        "LowerArmR": 20,
+        "UpperArmL": 20,
+        "LowerArmL": 20
+      },
+      "elementBlendMode": {
+        "UpperArmR": "AddAverage",
+        "LowerArmR": "AddAverage",
+        "UpperArmL": "AddAverage",
+        "LowerArmL": "AddAverage"
+      }
+    }
+
+  },
+
+
+  {
+    "file": "game:shapes/entity/humanoid/seraph-faceless",
+    "op": "add",
+    "path": "/animations/-",
+    "value": {
+        "quantityframes": 16,
+        "name": "RknCrafting.AxeHammer",
+        "code": "rkncrafting.axehammer",
+        "onActivityStopped": "EaseOut",
+        "onAnimationEnd": "Repeat",
+        "keyframes": [
+          {
+            "frame": 0,
+            "elements": {
+              "UpperArmR": {
+                "rotationX": 33.0,
+                "rotationY": -8.0,
+                "rotationZ": -29.0
+              },
+              "LowerArmR": {
+                "rotationX": 0.0,
+                "rotationY": 30.0,
+                "rotationZ": -60.0
+              },
+              "UpperArmL": {
+                "rotationX": -13.0,
+                "rotationY": 0.0,
+                "rotationZ": -30.0
+              },
+              "LowerArmL": {
+                "rotationX": 0.0,
+                "rotationY": -22.0,
+                "rotationZ": -95.0
+              }
+            }
+          },
+          {
+            "frame": 7,
+            "elements": {
+              "LowerArmR": {
+                "rotationX": 0.0,
+                "rotationY": 30.0,
+                "rotationZ": -60.0
+              }
+            }
+          },
+          {
+            "frame": 8,
+            "elements": {
+              "LowerArmL": {
+                "rotationX": 0.0,
+                "rotationY": -22.0,
+                "rotationZ": -76.0
+              },
+              "LowerArmR": {
+                "rotationX": 0.0,
+                "rotationY": 30.0,
+                "rotationZ": -55.0
+              },
+              "UpperArmL": {
+                "rotationX": -13.0,
+                "rotationY": 0.0,
+                "rotationZ": -25.0
+              }
+            }
+          },
+          {
+            "frame": 10,
+            "elements": {
+              "LowerArmR": {
+                "rotationX": 0.0,
+                "rotationY": 30.0,
+                "rotationZ": -60.0
+              }
+            }
+          }
+        ]
+      }
+    
+  }
+]

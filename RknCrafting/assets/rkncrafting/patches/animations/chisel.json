@@ -1,0 +1,201 @@
+[
+  {
+    "file": "game:entities/humanoid/player",
+    "op": "Add",
+    "path": "/client/animations/-",
+    "value": {
+      "code": "rkncrafting.chisel",
+      "animation": "rkncrafting.chisel",
+      "animationSpeed": 1.0,
+      "holdEyePosAfterEasein": 0,
+      "blendMode": "Add",
+      "easeInSpeed": 10.0,
+      "elementWeight": {
+        "UpperArmR": 1000,
+        "LowerArmR": 1000
+      },
+      "elementBlendMode": {
+        "UpperArmR": "AddAverage",
+        "LowerArmR": "AddAverage"
+      }
+    }
+
+  },
+
+
+  {
+    "file": "game:shapes/entity/humanoid/seraph-faceless",
+    "op": "add",
+    "path": "/animations/-",
+    "value": {
+      "quantityframes": 50,
+      "name": "RknCrafting.Chisel",
+      "code": "rkncrafting.chisel",
+      "onActivityStopped": "EaseOut",
+      "onAnimationEnd": "Repeat",
+      "keyframes": [
+        {
+          "frame": 0,
+          "elements": {
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -17.0,
+              "rotationZ": -58.0
+            },
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -47.0
+            }
+          }
+        },
+        {
+          "frame": 3,
+          "elements": {
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -47.0
+            },
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -17.0,
+              "rotationZ": -58.0
+            }
+          }
+        },
+        {
+          "frame": 5,
+          "elements": {
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -17.0,
+              "rotationZ": -48.0
+            },
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -37.0
+            }
+          }
+        },
+        {
+          "frame": 7,
+          "elements": {
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -17.0,
+              "rotationZ": -58.0
+            }
+          }
+        },
+        {
+          "frame": 8,
+          "elements": {
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -47.0
+            }
+          }
+        },
+        {
+          "frame": 16,
+          "elements": {
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -7.0,
+              "rotationZ": -58.0
+            },
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -47.0
+            }
+          }
+        },
+        {
+          "frame": 18,
+          "elements": {
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -8.1764707565307617,
+              "rotationZ": -55.0
+            },
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -31.0
+            }
+          }
+        },
+        {
+          "frame": 21,
+          "elements": {
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -9.9411764144897461,
+              "rotationZ": -58.0
+            }
+          }
+        },
+        {
+          "frame": 22,
+          "elements": {
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -47.0
+            }
+          }
+        },
+        {
+          "frame": 30,
+          "elements": {
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -12.131845474243164,
+              "rotationZ": -65.0
+            },
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -34.0
+            }
+          }
+        },
+        {
+          "frame": 32,
+          "elements": {
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -12.618660926818848,
+              "rotationZ": -57.0
+            },
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -24.0
+            }
+          }
+        },
+        {
+          "frame": 36,
+          "elements": {
+            "UpperArmR": {
+              "rotationX": 0.0,
+              "rotationY": -13.592291831970215,
+              "rotationZ": -60.0
+            },
+            "LowerArmR": {
+              "rotationX": -47.0,
+              "rotationY": 17.0,
+              "rotationZ": -37.0
+            }
+          }
+        }
+      ]
+    }
+
+  }
+]

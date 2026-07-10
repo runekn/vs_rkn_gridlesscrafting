@@ -24,15 +24,15 @@ public class CraftingAnimator
         // chiselhit
         EnumCraftingAnimation.HandsGeneric => "rkncrafting.handsmixing",
         EnumCraftingAnimation.HandsTool => "rkncrafting.handsmixing", // TODO
-        EnumCraftingAnimation.Hammer => "hammerhit",
+        EnumCraftingAnimation.Hammer => "rkncrafting.hammer",
         EnumCraftingAnimation.Axe => "axechop",
         EnumCraftingAnimation.AxeHammer => "rkncrafting.axehammer",
         EnumCraftingAnimation.Saw => "saw",
         EnumCraftingAnimation.Shears => "shears",
         EnumCraftingAnimation.ChiselHammer => "hammerandchisel",
-        EnumCraftingAnimation.Chisel => "hammerandchisel", // TODO
+        EnumCraftingAnimation.Chisel => "rkncrafting.chisel",
         EnumCraftingAnimation.Knife => "knifecut",
-        EnumCraftingAnimation.Club => "hammerhit", // TODO
+        EnumCraftingAnimation.Club => "rkncrafting.hammer",
         _ => throw new ArgumentOutOfRangeException(nameof(state), $"Not expected animation value: {state}"),
     };
 
