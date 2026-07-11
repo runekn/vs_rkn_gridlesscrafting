@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,13 @@ public class RecipeCatalog
 
     public RecipeCatalog(ICoreAPI api)
     {
-        //catalog = api.World.GridRecipes.Select(r => { r = r.Clone(); r.Shapeless = true; return r; }).ToList();
         this.api = api;
-    }
-
-    public int GetRecipe(GridRecipe recipe)
-    {
-        return api.World.GridRecipes.FindIndex(r => r == recipe);
+        // Add ids to recipes. The game doesn't seem to use this field itself, so I steal it so I can use fast grid recipes and still get index in main list.
+        for (int i = 0; i < api.World.GridRecipes.Count; i++)
+        {
+            GridRecipe recipe = api.World.GridRecipes[i];
+            recipe.RecipeId = i;
+        }
     }
 
     public GridRecipe GetRecipeById(int id)
@@ -28,13 +29,27 @@ public class RecipeCatalog
     public List<int> GetValidRecipesWithoutTools(List<ItemSlot> items)
     {
         List<int> result = [];
-        for (int i = 0; i < api.World.GridRecipes.Count; i++)
+        ItemStack? sample = items.First()?.Itemstack;
+        if (sample == null)
         {
-            if (MatchesRecipe(items, null, null, api.World.GridRecipes[i], true))
+            return result;
+        }
+        long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        foreach (var pair in api.World.FastSearchRecipesByIngredient)
+        {
+            if (IngredientSatisfied(pair.Key, sample, null))
             {
-                result.Add(i);
+                foreach (var recipe in pair.Value)
+                {
+                    if (MatchesRecipe(items, null, null, recipe as GridRecipe, true))
+                    {
+                        result.Add(recipe.RecipeId);
+                    }
+                }
             }
         }
+        long time = DateTimeOffset.Now.ToUnixTimeMilliseconds() - start;
+        api.RCLogger().Debug("Scanning recipes took {0} ms", [time]);
         return result;
     }
 
@@ -71,17 +86,17 @@ public class RecipeCatalog
 
     private bool MatchesIngredient(GridRecipe recipe, IEnumerable<ItemStack> items, ItemSlot? primaryTool, ItemSlot? offhandTool, CraftingRecipeIngredient ingredient, bool ignoreTools, ISet<ItemStack> unusedItems)
     {
-        if (!ingredient.Consume) // TODO: Why does ingredient.IsTool not work but ingredient.Consume does?
+        if (!ingredient.Consume)
         {
             if (ignoreTools)
             {
                 return true;
             }
-            if (primaryTool != null && ingredient.SatisfiesAsIngredient(primaryTool.Itemstack, true) && primaryTool.Itemstack.Collectible.MatchesForCrafting(primaryTool.Itemstack, recipe, ingredient))
+            if (IngredientSatisfied(ingredient, primaryTool?.Itemstack, recipe))
             {
                 return true;
             }
-            else if (offhandTool != null && ingredient.SatisfiesAsIngredient(offhandTool.Itemstack, true) && offhandTool.Itemstack.Collectible.MatchesForCrafting(offhandTool.Itemstack, recipe, ingredient))
+            else if (IngredientSatisfied(ingredient, offhandTool?.Itemstack, recipe))
             {
                 return true;
             }
@@ -91,7 +106,7 @@ public class RecipeCatalog
         {
             foreach (ItemStack stack in items)
             {
-                if (stack.StackSize > 0 && ingredient.SatisfiesAsIngredient(stack, true) && stack.Collectible.MatchesForCrafting(stack, recipe, ingredient))
+                if (IngredientSatisfied(ingredient, stack, recipe))
                 {
                     unusedItems.Remove(stack);
                     stack.StackSize -= ingredient.Quantity;
@@ -100,5 +115,10 @@ public class RecipeCatalog
             }
             return false;
         }
+    }
+
+    private bool IngredientSatisfied(IRecipeIngredientBase ingredient, ItemStack? stack, GridRecipe? recipe)
+    {
+        return stack != null && stack.StackSize > 0 && ingredient.SatisfiesAsIngredient(stack, true) && (recipe == null || stack.Collectible.MatchesForCrafting(stack, recipe, ingredient as IRecipeIngredient));
     }
 }

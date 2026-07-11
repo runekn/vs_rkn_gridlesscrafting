@@ -47,9 +47,8 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         base.Initialize(api);
         if (validRecipes != null && validRecipes.Count > 0)
         {
-            // Don't persist selected recipe after server restart
-            // TODO: will this desync on chunk reload?
-            selectedRecipe = validRecipes[0];
+            // Don't persist recipes after server restart
+            UpdateValidRecipes();
         }
         craftingSurfaceTimeModifier = api.World.BlockAccessor.GetBlock(Pos.DownCopy(1)).GetBehavior<BlockBehaviorSpawnCraftingSurface>().CraftingTimeModifier;
         config = api.RCConfig();
@@ -336,14 +335,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
 
                 if (Api.Side == EnumAppSide.Server)
                 {
-                    (List<ItemSlot>? items, ItemSlot? _, ItemSlot? _) = GetCraftingItems(byPlayer);
-                    List<int> recipes = Api.RCRecipeCatalog().GetValidRecipesWithoutTools(items);
-                    validRecipes = recipes;
-                    selectedRecipe = -1;
-                    if (recipes.Count > 0)
-                    {
-                        selectedRecipe = validRecipes[0];
-                    }
+                    UpdateValidRecipes();
                 }
 
                 MarkDirty(true, null);
@@ -352,6 +344,18 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             }
         }
         return false;
+    }
+
+    private void UpdateValidRecipes()
+    {
+        (List<ItemSlot>? items, ItemSlot? _, ItemSlot? _) = GetCraftingItems(null);
+        List<int> recipes = Api.RCRecipeCatalog().GetValidRecipesWithoutTools(items);
+        validRecipes = recipes;
+        selectedRecipe = -1;
+        if (recipes.Count > 0)
+        {
+            selectedRecipe = validRecipes[0];
+        }
     }
 
     public void SelectNextRecipe()
@@ -417,16 +421,21 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         }
     }
 
-    private (List<ItemSlot>? items, ItemSlot? primaryTool, ItemSlot? offhandTool) GetCraftingItems(IPlayer byPlayer)
+    private (List<ItemSlot>? items, ItemSlot? primaryTool, ItemSlot? offhandTool) GetCraftingItems(IPlayer? byPlayer)
     {
         List<ItemSlot> items = inventory.Where(s => s != null && s.StackSize > 0).ToList();
         if (items.Count == 0)
         {
             return (null, null, null);
         }
-        IPlayerInventoryManager inventoryManager = byPlayer.InventoryManager;
-        ItemSlot? primaryTool = inventoryManager.ActiveTool != null ? inventoryManager.ActiveHotbarSlot : null;
-        ItemSlot? offhandTool = inventoryManager.OffhandTool != null ? inventoryManager.OffhandHotbarSlot : null;
+        ItemSlot? primaryTool = null;
+        ItemSlot? offhandTool = null;
+        if (byPlayer != null)
+        {
+            IPlayerInventoryManager inventoryManager = byPlayer.InventoryManager;
+            primaryTool = inventoryManager.ActiveTool != null ? inventoryManager.ActiveHotbarSlot : null;
+            offhandTool = inventoryManager.OffhandTool != null ? inventoryManager.OffhandHotbarSlot : null;
+        }
         return (items, primaryTool, offhandTool);
     }
 
