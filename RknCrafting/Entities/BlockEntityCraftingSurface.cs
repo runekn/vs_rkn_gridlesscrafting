@@ -410,7 +410,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         }
     }
 
-    private int ConsumeRecipe(GridRecipe recipe, List<ItemSlot> items, ItemSlot? primaryTool, ItemSlot? offhandTool, IWorldAccessor world)
+    private int ConsumeRecipe(GridRecipe recipe, List<ItemSlot> items, ItemSlot? primaryTool, ItemSlot? offhandTool, IWorldAccessor world, ItemStack result)
     {
         if (recipe.ResolvedIngredients == null)
         {
@@ -420,6 +420,11 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         if (primaryTool != null) allItems.Add(primaryTool);
         if (offhandTool != null) allItems.Add(offhandTool);
         ItemSlot[] itemsArr = allItems.ToArray();
+        if (result.Collectible.ConsumeCraftingIngredients(itemsArr, new DummySlot(result), recipe))
+        {
+            Api.RCLogger().Debug("Recipe {0} was rejected by collectible!", recipe.Name);
+            return 0;
+        }
         int amount = 0;
         while (true)
         {
@@ -429,13 +434,20 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
                 {
                     continue;
                 }
+                int quantity = ingredient.Quantity;
                 foreach (ItemSlot slot in itemsArr)
                 {
-                    if (slot.Empty || !ingredient.SatisfiesAsIngredient(slot.Itemstack, true))
+                    if (slot.Empty || !ingredient.SatisfiesAsIngredient(slot.Itemstack, false))
                     {
                         continue;
                     }
-                    slot.Itemstack.Collectible.OnConsumedByCrafting(itemsArr, slot, recipe, ingredient, craftingParams?.player, ingredient.Quantity);
+                    int size = slot.Itemstack.StackSize;
+                    slot.Itemstack.Collectible.OnConsumedByCrafting(itemsArr, slot, recipe, ingredient, craftingParams?.player, quantity);
+                    quantity -= size;
+                    if (quantity <= 0)
+                    {
+                        break;
+                    }
                 }
             }
             amount++;
@@ -476,13 +488,19 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             return;
         }
         GridRecipe gridRecipe = Api.RCRecipeCatalog().GetRecipeById(selectedRecipe);
+        gridRecipe = gridRecipe.Clone();
+        gridRecipe.Shapeless = true;
         ItemStack result = gridRecipe.Output.ResolvedItemStack.Clone();
         if (!result.ResolveBlockOrItem(world))
         {
             return;
         }
+        int amount = ConsumeRecipe(gridRecipe, items, primaryTool, offhandTool, world, result);
+        if (amount == 0)
+        {
+            return;
+        }
         result.Collectible.OnCreatedByCrafting(items.ToArray(), new DummySlot(result), gridRecipe);
-        int amount = ConsumeRecipe(gridRecipe, items, primaryTool, offhandTool, world);
         result.StackSize *= amount;
         Api.World.SpawnItemEntity(result, Pos);
         Api.RCLogger().Debug("Crafted {0} by {1}!", gridRecipe.Name, craftingParams.player.PlayerName);

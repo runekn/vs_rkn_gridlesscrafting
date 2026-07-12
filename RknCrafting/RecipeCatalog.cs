@@ -76,6 +76,8 @@ public class RecipeCatalog
         {
             return false;
         }
+        MergeStacks(clonedItems);
+        clonedItems = clonedItems.Where(s => s.StackSize > 0).ToList(); // TODO: I don't like creating list again
         ISet<ItemStack> unusedItems = clonedItems.ToHashSet();
         foreach (CraftingRecipeIngredient? ingredient in recipe.ResolvedIngredients)
         {
@@ -93,6 +95,24 @@ public class RecipeCatalog
             return false;
         }
         return true;
+    }
+
+    protected virtual void MergeStacks(List<ItemStack> stacks)
+    {
+        for (int i = 1; i < stacks.Count; i++)
+        {
+            ItemStack stack1 = stacks[i];
+            for (int j = 0; j < i; j++)
+            {
+                ItemStack stack2 = stacks[j];
+                if (stack2.Satisfies(stack1))
+                {
+                    stack2.StackSize += stack1.StackSize;
+                    stack1.StackSize = 0;
+
+                }
+            }
+        }
     }
 
     private bool MatchesIngredient(GridRecipe recipe, IEnumerable<ItemStack> items, ItemSlot? primaryTool, ItemSlot? offhandTool, CraftingRecipeIngredient ingredient, bool ignoreTools, ISet<ItemStack> unusedItems)

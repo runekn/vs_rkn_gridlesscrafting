@@ -89,6 +89,9 @@ Any mod that disables grid recipes will also disable for this mod.
 	* Estimated difficulty: MEDIUM
 * Support adding ingredient while in mouse mode
 	* Estimated difficulty: MEDIUM
+* Support >2 tool recipes through partial craft items.
+	* When crafting recipe that requires >2 tools, it will output a partial craft item instead of the recipe output. This then needs to be put into a new crafting surface where it can then be worked on with the remaining tools.
+	* Estimated difficulty: HARD
 
 ## Known issues
 
