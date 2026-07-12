@@ -128,5 +128,70 @@
 				}
 			}
 		]
+	},
+	{
+		"file": "game:blocktypes/wood/woodtyped/planks",
+		"op": "addmerge",
+		"path": "/behaviors",
+		"value": [
+			{
+				"name": "rkncrafting.spawncraftingsurface",
+				"properties": {
+					"craftingTimeModifier": 0.6
+				}
+			}
+		]
+	},
+	{
+		"file": "game:blocktypes/wood/woodtyped/log",
+		"op": "addmerge",
+		"path": "/behaviorsByType/*",
+		"value": [
+			{
+				"name": "rkncrafting.spawncraftingsurface",
+				"properties": {
+					"craftingTimeModifier": 1
+				}
+			}
+		]
+	},
+	{
+		"file": "game:blocktypes/wood/woodtyped/log-debarked",
+		"op": "addmerge",
+		"path": "/behaviors",
+		"value": [
+			{
+				"name": "rkncrafting.spawncraftingsurface",
+				"properties": {
+					"craftingTimeModifier": 0.9
+				}
+			}
+		]
+	},
+	{
+		"file": "game:blocktypes/wood/woodtyped/log-quad",
+		"op": "addmerge",
+		"path": "/behaviorsByType/*",
+		"value": [
+			{
+				"name": "rkncrafting.spawncraftingsurface",
+				"properties": {
+					"craftingTimeModifier": 0.8
+				}
+			}
+		]
+	},
+	{
+		"file": "game:blocktypes/wood/woodtyped/log-quad-corner",
+		"op": "addmerge",
+		"path": "/behaviors",
+		"value": [
+			{
+				"name": "rkncrafting.spawncraftingsurface",
+				"properties": {
+					"craftingTimeModifier": 0.8
+				}
+			}
+		]
 	}
 ]
