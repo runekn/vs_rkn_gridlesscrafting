@@ -23,8 +23,8 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     private float craftingSurfaceTimeModifier = 1.0f;
     private RknCraftingConfig config;
 
-    public override InventoryBase Inventory { get { return inventory; }}
-    public override string InventoryClassName { get { return "craftingsurface"; } }
+    public override InventoryBase Inventory => inventory;
+    public override string InventoryClassName => "craftingsurface";
     public override string AttributeTransformCode => "craftingIngredientTransform";
 
     // Client Runtime fields
@@ -97,12 +97,30 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         sb.AppendLine();
         if (validRecipes is { Count: > 0 })
         {
-            sb.Append("Selected: ").AppendLine(validRecipes[selectedRecipe].Wrapper.RecipeWithoutTools.Output?.ResolvedItemStack?.GetName());
+            sb.Append("Selected: ").AppendLine(validRecipes[selectedRecipe].Output?.GetName());
             if (validRecipes.Count > 1)
             {
                 sb.Append(validRecipes.Count - 1).Append(" more valid recipes");
             }
         }
+    }
+
+    protected override MeshData getOrCreateMesh(ItemSlot slot, int index)
+    {
+        // Fix crates. Because they do not have proper config to display their custom mesh
+        if (slot.Itemstack?.Block is BlockCrate crate)
+        {
+            MeshData mesh = getMesh(slot);
+            if (mesh != null)
+                return mesh;
+            ItemStack stack = slot.Itemstack;
+            string type = stack.Attributes.GetString("type");
+            mesh = crate.GenMesh(capi, stack, type, null, stack.Attributes.GetString("lidState"), crate.Props[type].Shape);
+            applyDefaultTranforms(stack, mesh);
+            MeshCache[getMeshCacheKey(slot)] = mesh;
+            return mesh;
+        }
+        return base.getOrCreateMesh(slot, index);
     }
 
     public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldForResolving)
@@ -241,7 +259,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     public void ClientStopCrafting(EnumCraftingAnimation anim)
     {
         timeoutTimer = 0;
-        IPlayer player = (Api as ICoreClientAPI).World.Player;
+        IPlayer player = capi.World.Player;
         Api.RCLogger().Debug("Stop crafting by {0}!", player.PlayerName);
         Api.RCAnimator().StopCrafting(player, anim);
         ResetState();
@@ -305,15 +323,6 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         }
         else
         {
-            /*int i = SelectionToInventoryIndex(selectionBoxIndex);
-            if (i >= 0)
-            {
-                ItemSlot invSlot = inventory[i];
-                if (invSlot.CanTakeFrom(slot))
-                {
-                    return invSlot;
-                }
-            }*/
             ItemSlot invSlot = inventory[selectionBoxIndex];
             if (invSlot.CanTakeFrom(slot))
             {
@@ -327,7 +336,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     {
         if (recipeSelectionDialog == null)
         {
-            recipeSelectionDialog = new RecipeSelectionDialog(Api as ICoreClientAPI, Pos); 
+            recipeSelectionDialog = new RecipeSelectionDialog(capi, Pos); 
         }
         recipeSelectionDialog
             .TryOpen(validRecipes.ToArray(), i =>
@@ -402,7 +411,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             selectedRecipe = -1;
             return;
         }
-        List<ScanResult> recipes = Api.RCRecipeCatalog().GetValidRecipes(inputSlots, config.EnableGridless, (Api as ICoreClientAPI).World.Player);
+        List<ScanResult> recipes = Api.RCRecipeCatalog().GetValidRecipes(inputSlots, config.EnableGridless, capi.World.Player);
         validRecipes = recipes;
         selectedRecipe = -1;
         if (recipes.Count > 0)
@@ -627,7 +636,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
 
     private void ClientError(string error)
     {
-        (Api as ICoreClientAPI)?.TriggerIngameError(this, "rkncrafting." + error, Lang.Get("rkncrafting:error-" + error));
+        capi?.TriggerIngameError(this, "rkncrafting." + error, Lang.Get("rkncrafting:error-" + error));
     }
 }
 
