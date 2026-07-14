@@ -211,12 +211,12 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         return true;
     }
 
-    public void OnCraftingStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+    public bool OnCraftingStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
     {
         timeoutTimer = 0;
         if (Api.Side != EnumAppSide.Server || craftingParams == null)
         {
-            return;
+            return true;
         }
         if (craftingParams.Bulk && !byPlayer.Entity.Controls.CtrlKey)
         {
@@ -225,7 +225,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             Api.RCNetwork().StopCrafting(craftingParams.Player, enumCraftingAnimation, Pos);
             Api.RCAnimator().StopCrafting(craftingParams.Player, enumCraftingAnimation);
             ResetState();
-            return;
+            return false;
         }
         if (secondsUsed > craftingParams.NextCraftingTime && IsCrafting(byPlayer))
         {
@@ -242,7 +242,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
                 EnumCraftingAnimation enumCraftingAnimation = GetCraftingAnimation();
                 Api.RCNetwork().StopCrafting(craftingParams.Player, enumCraftingAnimation, Pos);
                 Api.RCAnimator().StopCrafting(craftingParams.Player, enumCraftingAnimation);
-                return;
+                return false;
             }
             if (!Api.RCRecipeCatalog().MatchesRecipe(inputSlots, craftingParams.Recipe.Wrapper, config.EnableGridless, byPlayer))
             {
@@ -251,8 +251,10 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
                 Api.RCAnimator().StopCrafting(craftingParams.Player, enumCraftingAnimation);
                 ResetState();
             }
-            MarkDirty(true, null);
+            MarkDirty(true);
         }
+
+        return true;
     }
 
     public void CancelCrafting(IWorldAccessor world, IPlayer byPlayer)

@@ -105,9 +105,9 @@ public class BlockCraftingSurface : Block
         }
         if (be.IsCrafting(byPlayer))
         {
-            be.OnCraftingStep(secondsUsed, world, byPlayer, blockSel);
+            return be.OnCraftingStep(secondsUsed, world, byPlayer, blockSel);
         }
-        return true;
+        return false;
     }
     
     public override void OnBlockInteractStop(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)

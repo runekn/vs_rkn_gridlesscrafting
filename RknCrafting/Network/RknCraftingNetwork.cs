@@ -80,7 +80,7 @@ public class RknCraftingNetwork
         }
         else
         {
-            api.RCAnimator().StopCrafting((api as ICoreClientAPI).World.Player, message.animation);
+            api.RCAnimator().StopCrafting(ClientApi.World.Player, message.animation);
         }
     }
 

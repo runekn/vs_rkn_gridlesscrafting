@@ -113,7 +113,7 @@ Any mod that disables grid recipes will also disable for this mod.
 
 ## Known issues
 
-None :D
+* If you craft a block that uses up the last ingredients which makes crafting surface delete itself, and you are still holding right click, you may place the output immediately. This is quite annoying.
 
 ## Major release changelog
 
