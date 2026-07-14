@@ -117,5 +117,5 @@ Any mod that disables grid recipes will also disable for this mod.
 
 ## Major release changelog
 
-* 0.2.0: Added grid to crafting surface. Added new recipe selection UI. Recipes are now scanned on client instead of server. Tools are no longer ignored during recipe scan.
+* 0.2.0: Added grid to crafting surface. Added new recipe selection UI. Recipes are now scanned on client instead of server. Tools are no longer ignored during recipe scan. Ability to take back ingredients.
 * 0.1.0: Initial pre-release
