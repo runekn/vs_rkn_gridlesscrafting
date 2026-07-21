@@ -42,7 +42,7 @@ public class CraftingAnimator
         string anim = ToAnimationCode(animation);
         if (!byPlayer.Entity.AnimManager.StartAnimation(anim))
         {
-            api.RCLogger().Warning("Could not start animation: " + anim);
+            api.RcLogger().Warning("Could not start animation: " + anim);
         }
         return animation;
     }
@@ -57,7 +57,7 @@ public class CraftingAnimator
     {
         if (primaryTool == null)
         {
-            if (api.RCRecipeCatalog().GetRecipeById(recipe).RecipeWithTools.Output?.ResolvedItemStack?.Item?.Tool != null)
+            if (api.RcRecipeCatalog().GetRecipeById(recipe).RecipeWithTools.Output?.ResolvedItemStack?.Item?.Tool != null)
             {
                 return EnumCraftingAnimation.HandsTool;
             }

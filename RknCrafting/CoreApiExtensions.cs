@@ -12,32 +12,32 @@ namespace RKN.Crafting;
 
 public static class CoreApiExtensions
 {
-    public static RecipeCatalog RCRecipeCatalog(this ICoreAPI api)
+    public static RecipeCatalog RcRecipeCatalog(this ICoreAPI api)
     {
         return api.ModLoader.GetModSystem<RknCraftingModSystem>().RecipeCatalog;
     }
 
-    public static RknCraftingNetwork RCNetwork(this ICoreAPI api)
+    public static RknCraftingNetwork RcNetwork(this ICoreAPI api)
     {
         return api.ModLoader.GetModSystem<RknCraftingModSystem>().Network;
     }
 
-    public static CraftingAnimator RCAnimator(this ICoreAPI api)
+    public static CraftingAnimator RcAnimator(this ICoreAPI api)
     {
         return api.ModLoader.GetModSystem<RknCraftingModSystem>().Animator;
     }
 
-    public static RknCraftingConfig RCConfig(this ICoreAPI api)
+    public static RknCraftingConfig RcConfig(this ICoreAPI api)
     {
         return api.ModLoader.GetModSystem<RknCraftingModSystem>().Config;
     }
 
-    public static RknCraftingModSystem RCSystem(this ICoreAPI api)
+    public static RknCraftingModSystem RcSystem(this ICoreAPI api)
     {
         return api.ModLoader.GetModSystem<RknCraftingModSystem>();
     }
 
-    public static ILogger RCLogger(this ICoreAPI api)
+    public static ILogger RcLogger(this ICoreAPI api)
     {
         return api.ModLoader.GetMod("rkncrafting").Logger;
     }
@@ -45,5 +45,10 @@ public static class CoreApiExtensions
     public static bool IsHoldingCraftingButton(this IInputAPI api)
     {
         return api.IsHotKeyPressed("rkncrafting.start");
+    }
+
+    public static void RcPauseInteractions(this ICoreAPI api)
+    {
+        api.ModLoader.GetModSystem<RknCraftingModSystem>().BeginPauseInterations = Environment.TickCount;
     }
 }

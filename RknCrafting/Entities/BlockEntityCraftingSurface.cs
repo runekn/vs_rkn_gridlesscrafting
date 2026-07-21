@@ -50,7 +50,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         BlockEntityCraftingSurface entity = api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(pos);
         if (entity == null)
         {
-            api.RCLogger().Debug("Got OnInventoryUpdated for non-existing block: [{0},{1},{2}]", pos.X, pos.Y, pos.Z);
+            api.RcLogger().Debug("Got OnInventoryUpdated for non-existing block: [{0},{1},{2}]", pos.X, pos.Y, pos.Z);
             return;
         }
 
@@ -67,7 +67,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     {
         base.Initialize(api);
         craftingSurfaceTimeModifier = api.World.BlockAccessor.GetBlock(Pos.DownCopy(1)).GetBehavior<BlockBehaviorSpawnCraftingSurface>().CraftingTimeModifier;
-        config = api.RCConfig();
+        config = api.RcConfig();
         craftingParams = null; // Override FromTreeAttributes because we don't want dummy craftingParams on server
     }
 
@@ -165,7 +165,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         craftingParams = new CraftingParams()
         {
             Player = byPlayer,
-            Recipe = Api.RCRecipeCatalog().GetScanResult(recipe, GetCraftingInputSlots(byPlayer, blockFacing)),
+            Recipe = Api.RcRecipeCatalog().GetScanResult(recipe, GetCraftingInputSlots(byPlayer, blockFacing)),
             Animation = animation,
             Bulk = bulk,
             RecipeCraftingTimeModifier = recipeModifier,
@@ -196,24 +196,24 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             return false;
         }
         RecipeInputSlots inputSlots = GetCraftingInputSlots(byPlayer, lastFacing);
-        if (inputSlots == null || !Api.RCRecipeCatalog().MatchesRecipe(inputSlots, result.Wrapper, config.EnableGridless, byPlayer))
+        if (inputSlots == null || !Api.RcRecipeCatalog().MatchesRecipe(inputSlots, result.Wrapper, config.EnableGridless, byPlayer))
         {
             ClientError("missingreciperequirement");
             return false;
         }
-        bool bulk = byPlayer.Entity.Controls.CtrlKey && Api.RCConfig().EnableBulkCrafting;
+        bool bulk = byPlayer.Entity.Controls.CtrlKey && Api.RcConfig().EnableBulkCrafting;
         craftingParams = new CraftingParams()
         {
             Player = byPlayer,
             Facing = lastFacing,
             Recipe = result,
-            Animation = Api.RCAnimator().StartCrafting(byPlayer, selectedRecipe, inputSlots.PrimaryTool, inputSlots.OffhandTool),
+            Animation = Api.RcAnimator().StartCrafting(byPlayer, selectedRecipe, inputSlots.PrimaryTool, inputSlots.OffhandTool),
             Bulk = bulk,
             RecipeCraftingTimeModifier = GetRecipeOutputCraftingModifier(),
         };
         craftingParams.NextCraftingTime = GetCraftingTime();
-        Api.RCNetwork().ClientStartedCrafting(craftingParams, Pos);
-        Api.RCLogger().Debug("Crafting {0} by {1}!", craftingParams.Recipe.Wrapper.RecipeWithoutTools.Name, craftingParams.Player.PlayerName);
+        Api.RcNetwork().ClientStartedCrafting(craftingParams, Pos);
+        Api.RcLogger().Debug("Crafting {0} by {1}!", craftingParams.Recipe.Wrapper.RecipeWithoutTools.Name, craftingParams.Player.PlayerName);
         return true;
     }
 
@@ -228,8 +228,8 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         {
             // Player let go of bulk modifier key
             EnumCraftingAnimation enumCraftingAnimation = GetCraftingAnimation();
-            Api.RCNetwork().StopCrafting(craftingParams.Player, enumCraftingAnimation, Pos);
-            Api.RCAnimator().StopCrafting(craftingParams.Player, enumCraftingAnimation);
+            Api.RcNetwork().StopCrafting(craftingParams.Player, enumCraftingAnimation, Pos);
+            Api.RcAnimator().StopCrafting(craftingParams.Player, enumCraftingAnimation);
             ResetState();
             return false;
         }
@@ -246,15 +246,15 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             {
                 Api.World.BlockAccessor.BreakBlock(Pos, byPlayer);
                 EnumCraftingAnimation enumCraftingAnimation = GetCraftingAnimation();
-                Api.RCNetwork().StopCrafting(craftingParams.Player, enumCraftingAnimation, Pos);
-                Api.RCAnimator().StopCrafting(craftingParams.Player, enumCraftingAnimation);
+                Api.RcNetwork().StopCrafting(craftingParams.Player, enumCraftingAnimation, Pos);
+                Api.RcAnimator().StopCrafting(craftingParams.Player, enumCraftingAnimation);
                 return false;
             }
-            if (!Api.RCRecipeCatalog().MatchesRecipe(inputSlots, craftingParams.Recipe.Wrapper, config.EnableGridless, byPlayer))
+            if (!Api.RcRecipeCatalog().MatchesRecipe(inputSlots, craftingParams.Recipe.Wrapper, config.EnableGridless, byPlayer))
             {
                 EnumCraftingAnimation enumCraftingAnimation = GetCraftingAnimation();
-                Api.RCNetwork().StopCrafting(craftingParams.Player, enumCraftingAnimation, Pos);
-                Api.RCAnimator().StopCrafting(craftingParams.Player, enumCraftingAnimation);
+                Api.RcNetwork().StopCrafting(craftingParams.Player, enumCraftingAnimation, Pos);
+                Api.RcAnimator().StopCrafting(craftingParams.Player, enumCraftingAnimation);
                 ResetState();
                 return false;
             }
@@ -271,9 +271,9 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         {
             return;
         }
-        Api.RCLogger().Debug("Cancelled crafting by {0}!", craftingParams.Player.PlayerName);
+        Api.RcLogger().Debug("Cancelled crafting by {0}!", craftingParams.Player.PlayerName);
         EnumCraftingAnimation anim = GetCraftingAnimation();
-        Api.RCAnimator().StopCrafting(byPlayer, anim);
+        Api.RcAnimator().StopCrafting(byPlayer, anim);
         ResetState();
     }
 
@@ -281,8 +281,9 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     {
         timeoutTimer = 0;
         IPlayer player = capi.World.Player;
-        Api.RCLogger().Debug("Stop crafting by {0}!", player.PlayerName);
-        Api.RCAnimator().StopCrafting(player, anim);
+        capi.RcPauseInteractions();
+        Api.RcLogger().Debug("Stop crafting by {0}!", player.PlayerName);
+        Api.RcAnimator().StopCrafting(player, anim);
         ResetState();
     }
 
@@ -298,7 +299,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         {
             return false;
         }
-        Api.RCLogger().Debug("Inserting into slot {0}", selectionBoxIndex);
+        Api.RcLogger().Debug("Inserting into slot {0}", selectionBoxIndex);
         ItemSlot? invSlot = GetInventorySlot(invSlot => invSlot.CanTakeFrom(slot), selectionBoxIndex);
         if (invSlot == null)
         {
@@ -337,7 +338,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         {
             return false;
         }
-        Api.RCLogger().Debug("Taking into slot {0}", selectionBoxIndex);
+        Api.RcLogger().Debug("Taking into slot {0}", selectionBoxIndex);
         ItemSlot? invSlot = GetInventorySlot(invSlot => slot.CanTakeFrom(invSlot), selectionBoxIndex, true);
         if (invSlot == null)
         {
@@ -404,7 +405,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             .TryOpen(validRecipes.ToArray(), i =>
             {
                 selectedRecipe = i;
-                Api.RCLogger().Debug("selected: {0} {1}", i, GetSelectedRecipe().Wrapper.RecipeWithTools.Name);
+                Api.RcLogger().Debug("selected: {0} {1}", i, GetSelectedRecipe().Wrapper.RecipeWithTools.Name);
                 recipeSelectionDialog.TryClose();
             });
     }
@@ -451,13 +452,13 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         float @base = craftingParams.Bulk ? config.BulkBaseCraftingTimeSeconds : config.BaseCraftingTimeSeconds;
         float consecutiveModifer = craftingParams.Amount == 0 ? 1 : Math.Max(config.ConsecutiveCraftingTimeModifierMin, (float)Math.Pow(config.ConsecutiveCraftingTimeModifier, craftingParams.Amount));
         float r = @base * craftingSurfaceTimeModifier * craftingParams.RecipeCraftingTimeModifier * consecutiveModifer;
-        Api.RCLogger().Debug("Next crafting time: {0}", r);
+        Api.RcLogger().Debug("Next crafting time: {0}", r);
         return r;
     }
 
     private float GetRecipeOutputCraftingModifier()
     {
-        JsonObject? recipeProperties = Api.RCRecipeCatalog().GetRecipeById(selectedRecipe).RecipeWithoutTools.Attributes;
+        JsonObject? recipeProperties = Api.RcRecipeCatalog().GetRecipeById(selectedRecipe).RecipeWithoutTools.Attributes;
         return recipeProperties != null ? recipeProperties["craftingTimeModifier"].AsFloat(1f) : 1f;
     }
 
@@ -473,7 +474,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             selectedRecipe = -1;
             return;
         }
-        List<ScanResult> recipes = Api.RCRecipeCatalog().GetValidRecipes(inputSlots, config.EnableGridless, capi.World.Player);
+        List<ScanResult> recipes = Api.RcRecipeCatalog().GetValidRecipes(inputSlots, config.EnableGridless, capi.World.Player);
         validRecipes = recipes;
         if (recipes.Count == 0)
         {
@@ -492,7 +493,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             return;
         }
         RecipeInputSlots inputSlots = GetCraftingInputSlots(craftingParams.Player, craftingParams.Facing);
-        if (inputSlots?.Items == null || !Api.RCRecipeCatalog().MatchesRecipe(inputSlots, craftingParams.Recipe.Wrapper, config.EnableGridless, craftingParams.Player))
+        if (inputSlots?.Items == null || !Api.RcRecipeCatalog().MatchesRecipe(inputSlots, craftingParams.Recipe.Wrapper, config.EnableGridless, craftingParams.Player))
         {
             return;
         }
@@ -506,7 +507,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         }
         output.StackSize *= amount;
         Api.World.SpawnItemEntity(output, Pos);
-        Api.RCLogger().Debug("Crafted {0} by {1}!", result.Wrapper.RecipeWithoutTools.Name, craftingParams.Player.PlayerName);
+        Api.RcLogger().Debug("Crafted {0} by {1}!", result.Wrapper.RecipeWithoutTools.Name, craftingParams.Player.PlayerName);
     }
 
     private int ConsumeRecipe(GridRecipeWrapper wrapper, RecipeInputSlots inputSlots, ItemStack result)
@@ -516,7 +517,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             return ConsumeRecipeGridless(wrapper.RecipeWithTools, inputSlots, result);
         }
         int amount = 0;
-        RecipeCatalog recipeCatalog = Api.RCRecipeCatalog();
+        RecipeCatalog recipeCatalog = Api.RcRecipeCatalog();
         while (
             recipeCatalog.MatchesRecipe(inputSlots, wrapper, config.EnableGridless, craftingParams.Player) && 
             wrapper.RecipeWithoutTools.ConsumeInput(craftingParams.Player, inputSlots.Items, 3) &&
@@ -569,7 +570,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         ItemSlot[] itemsArr = allItems.ToArray();
         if (result.Collectible.ConsumeCraftingIngredients(itemsArr, new DummySlot(result), recipe))
         {
-            Api.RCLogger().Debug("Recipe {0} was rejected by collectible!", recipe.Name);
+            Api.RcLogger().Debug("Recipe {0} was rejected by collectible!", recipe.Name);
             return 0;
         }
         int amount = 0;
@@ -598,7 +599,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
                 }
             }
             amount++;
-            if (!craftingParams.Bulk || !inputSlots.Items.Any(i => i != null) || !Api.RCRecipeCatalog().MatchesRecipe(inputSlots, craftingParams.Recipe.Wrapper, config.EnableGridless, craftingParams.Player))
+            if (!craftingParams.Bulk || !inputSlots.Items.Any(i => i != null) || !Api.RcRecipeCatalog().MatchesRecipe(inputSlots, craftingParams.Recipe.Wrapper, config.EnableGridless, craftingParams.Player))
             {
                 return amount;
             }

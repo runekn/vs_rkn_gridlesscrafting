@@ -12,10 +12,10 @@ public class BlockCraftingSurface : Block
         BlockCraftingSurface? block = api.World.GetBlock(new AssetLocation("rkncrafting:craftingsurface")) as BlockCraftingSurface;
         if (block == null)
         {
-            api.RCLogger().Error("Crafting block did not spawn with BlockEntityCraftingSurface!");
+            api.RcLogger().Error("Crafting block did not spawn with BlockEntityCraftingSurface!");
             return false;
         }
-        api.RCLogger().Debug("Trying to place crafting block at " + blockPos.ToString());
+        api.RcLogger().Debug("Trying to place crafting block at " + blockPos.ToString());
         BlockPos abovePos = blockPos.UpCopy(1);
         if (api.World.BlockAccessor.GetBlock(abovePos).Replaceable < 6000)
         {
@@ -25,15 +25,15 @@ public class BlockCraftingSurface : Block
         BlockEntityCraftingSurface? blockEntity = api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(abovePos);
         if (blockEntity == null)
         {
-            api.RCLogger().Error("Crafting block did not spawn with BlockEntityCraftingSurface!");
+            api.RcLogger().Error("Crafting block did not spawn with BlockEntityCraftingSurface!");
             api.World.BlockAccessor.BreakBlock(abovePos, null);
             return false;
         }
-        if (api.RCConfig().EnableGridless)
+        if (api.RcConfig().EnableGridless)
         {
             if (!blockEntity.TryPutIngredient(slot, byPlayer))
             {
-                api.RCLogger().Error("Could not put initial items into newly spawned crafting block!");
+                api.RcLogger().Error("Could not put initial items into newly spawned crafting block!");
                 api.World.BlockAccessor.BreakBlock(abovePos, null);
                 return false;
             }
@@ -43,7 +43,7 @@ public class BlockCraftingSurface : Block
 
     public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos pos)
     {
-        if (api.RCConfig().EnableGridless)
+        if (api.RcConfig().EnableGridless)
         {
             return base.GetSelectionBoxes(blockAccessor, pos);
         }

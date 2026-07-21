@@ -31,7 +31,7 @@ public class BlockBehaviorSpawnCraftingSurface(Block block) : BlockBehavior(bloc
         if (!r) {
             return true;
         }
-        world.Api.RCNetwork().SpawnCraftingSurface(blockSel.Position);
+        world.Api.RcNetwork().SpawnCraftingSurface(blockSel.Position);
         handling = EnumHandling.PreventSubsequent;
         // It would be better if I could return false to prevent default server message as we have done that ourselves.
         // But that will also enable default behavior to place block, which causes game to crash because we have now removed the block from inventory.

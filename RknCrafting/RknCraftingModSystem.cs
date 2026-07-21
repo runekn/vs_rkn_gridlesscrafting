@@ -24,8 +24,9 @@ public class RknCraftingModSystem : ModSystem
 
     public RknCraftingNetwork Network { get; internal set; }
     public RecipeCatalog RecipeCatalog { get; internal set; }
-    public CraftingAnimator Animator{ get; internal set; }
-    public RknCraftingConfig Config{ get; internal set; }
+    public CraftingAnimator Animator { get; internal set; }
+    public RknCraftingConfig Config { get; internal set; }
+    public long BeginPauseInterations { get; set; }
 #pragma warning restore CS8618
 
     public override void Start(ICoreAPI api)
@@ -39,7 +40,7 @@ public class RknCraftingModSystem : ModSystem
         Animator = new CraftingAnimator(api);
         ApplyHarmonyPatches();
 
-        api.RCLogger().Debug("Hello world!");
+        api.RcLogger().Debug("Hello world!");
     }
 
     public override void StartClientSide(ICoreClientAPI api)
@@ -48,6 +49,24 @@ public class RknCraftingModSystem : ModSystem
         api.Input.RegisterHotKey("rkncrafting.start", Lang.Get("rkncrafting:hotkey-crafting"), GlKeys.AltLeft);
         Network = new RknCraftingNetwork(api, Mod.Info.ModID);
         api.Event.BlockChanged += UpdateCraftingSurface; // Why is this neccessary? Vanilla shelf seems to work just fine without.
+        api.Input.InWorldAction += CheckPauseInteractions;
+        api.Event.MouseUp += CheckResumeInteractions;
+    }
+
+    private void CheckResumeInteractions(MouseEvent e)
+    {
+        if (e.Button == EnumMouseButton.Right)
+        {
+            BeginPauseInterations = 0;
+        }
+    }
+
+    private void CheckPauseInteractions(EnumEntityAction action, bool on, ref EnumHandling handled)
+    {
+        if (action == EnumEntityAction.InWorldRightMouseDown && (Environment.TickCount - BeginPauseInterations) < 2_000)
+        {
+            handled = EnumHandling.PreventDefault;
+        }
     }
 
     public override void StartServerSide(ICoreServerAPI api)

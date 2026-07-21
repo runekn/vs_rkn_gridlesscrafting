@@ -72,7 +72,7 @@ public class RknCraftingNetwork
 
     protected void OnCraftingStoppedMessage(CraftingStoppedMessage message)
     {
-        api.RCLogger().Debug("Received stop crafting message!");
+        api.RcLogger().Debug("Received stop crafting message!");
         BlockEntityCraftingSurface entity = api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(message.Position);
         if (entity != null)
         {
@@ -80,21 +80,22 @@ public class RknCraftingNetwork
         }
         else
         {
-            api.RCAnimator().StopCrafting(ClientApi.World.Player, message.animation);
+            ClientApi.RcPauseInteractions();
+            api.RcAnimator().StopCrafting(ClientApi.World.Player, message.animation);
         }
     }
 
     public void TransferConfig(RknCraftingConfig config, IServerPlayer player)
     {
-        api.RCLogger().Debug("Sending config to player {0}: {1}", [player.PlayerName, config]);
+        api.RcLogger().Debug("Sending config to player {0}: {1}", [player.PlayerName, config]);
         ServerChannel.SendPacket(new ConfigMessage() { Config = config }, player);
     }
 
     private void OnConfigMessage(ConfigMessage message)
     {
-        api.RCLogger().Debug("Received config from server: {0}", message.Config);
-        api.RCSystem().Config = message.Config;
-        api.RCSystem().InitCatalog();
+        api.RcLogger().Debug("Received config from server: {0}", message.Config);
+        api.RcSystem().Config = message.Config;
+        api.RcSystem().InitCatalog();
     }
 
     public void ClientStartedCrafting(CraftingParams craftingParams, BlockPos pos)
@@ -113,7 +114,7 @@ public class RknCraftingNetwork
 
     private void OnClientStartedCraftingMessage(IPlayer byPlayer, ClientStartedCraftingMessage message)
     {
-        api.RCLogger().Debug("Received start crafting message from {0}!", byPlayer.PlayerName);
+        api.RcLogger().Debug("Received start crafting message from {0}!", byPlayer.PlayerName);
         api.World.BlockAccessor.GetBlockEntity<BlockEntityCraftingSurface>(message.Position).ClientStartedCrafting(
             byPlayer, 
             message.Animation, 

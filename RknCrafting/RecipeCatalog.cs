@@ -14,7 +14,7 @@ public class RecipeCatalog
     public RecipeCatalog(ICoreAPI api)
     {
         this.api = api;
-        bool gridlesss = api.RCConfig().EnableGridless;
+        bool gridlesss = api.RcConfig().EnableGridless;
         recipes = new(api.World.GridRecipes.Count);
         for (int i = 0; i < api.World.GridRecipes.Count; i++)
         {
@@ -54,7 +54,7 @@ public class RecipeCatalog
         {
             return result;
         }
-        long start = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        long start = Environment.TickCount;
         foreach (var pair in api.World.FastSearchRecipesByIngredient)
         {
             if (IngredientSatisfied(pair.Key, sample, null))
@@ -75,8 +75,8 @@ public class RecipeCatalog
                 }
             }
         }
-        long time = DateTimeOffset.Now.ToUnixTimeMilliseconds() - start;
-        api.RCLogger().Debug("Scanning recipes took {0} ms", [time]);
+        long time = Environment.TickCount - start;
+        api.RcLogger().Debug("Scanning recipes took {0} ms", [time]);
         return result;
     }
 
