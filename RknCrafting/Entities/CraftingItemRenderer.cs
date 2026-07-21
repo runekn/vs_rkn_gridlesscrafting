@@ -32,7 +32,7 @@ internal class CraftingItemRenderer
 
             FastVec3f scale = Vec3f.One;
 
-            customTransform = itemSlot.Itemstack.Collectible.Attributes[transformCode].AsObject<ModelTransform>();
+            customTransform = itemSlot.Itemstack.Collectible?.Attributes?[transformCode].AsObject<ModelTransform>();
             if (customTransform == null)
             {
                 scale = scale.Mul(0.30f);
