@@ -27,9 +27,9 @@ public static class CoreApiExtensions
         return api.ModLoader.GetModSystem<RknCraftingModSystem>().Animator;
     }
 
-    public static RknCraftingConfig RcConfig(this ICoreAPI api)
+    public static RknCraftingConfig RcServerConfig(this ICoreAPI api)
     {
-        return api.ModLoader.GetModSystem<RknCraftingModSystem>().Config;
+        return api.ModLoader.GetModSystem<RknCraftingModSystem>().ServerConfig;
     }
 
     public static RknCraftingModSystem RcSystem(this ICoreAPI api)

@@ -22,6 +22,8 @@ public class RknCraftingConfig
     public bool DisableUICraftingGrid = true;
     [ProtoMember(8)]
     public bool EnableGridless = false;
+    [ProtoMember(9)]
+    public float PauseInteractPostCraftSeconds = 2.0f;
 
     public override string ToString()
     {

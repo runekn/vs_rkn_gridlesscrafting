@@ -94,7 +94,7 @@ public class RknCraftingNetwork
     private void OnConfigMessage(ConfigMessage message)
     {
         api.RcLogger().Debug("Received config from server: {0}", message.Config);
-        api.RcSystem().Config = message.Config;
+        api.RcSystem().ServerConfig = message.Config;
         api.RcSystem().InitCatalog();
     }
 

@@ -14,7 +14,7 @@ public class RecipeCatalog
     public RecipeCatalog(ICoreAPI api)
     {
         this.api = api;
-        bool gridlesss = api.RcConfig().EnableGridless;
+        bool gridlesss = api.RcServerConfig().EnableGridless;
         recipes = new(api.World.GridRecipes.Count);
         for (int i = 0; i < api.World.GridRecipes.Count; i++)
         {

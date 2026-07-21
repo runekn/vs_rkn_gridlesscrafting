@@ -5,8 +5,7 @@ using RKN.Crafting.Network;
 using RKN.Crafting.Patches;
 using RknCrafting;
 using System;
-using System.Formats.Asn1;
-using System.Numerics;
+using System.Reflection;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -25,7 +24,8 @@ public class RknCraftingModSystem : ModSystem
     public RknCraftingNetwork Network { get; internal set; }
     public RecipeCatalog RecipeCatalog { get; internal set; }
     public CraftingAnimator Animator { get; internal set; }
-    public RknCraftingConfig Config { get; internal set; }
+    public RknCraftingConfig ServerConfig { get; internal set; }
+    public RknCraftingConfig LocalConfig { get; internal set; }
     public long BeginPauseInterations { get; set; }
 #pragma warning restore CS8618
 
@@ -33,11 +33,15 @@ public class RknCraftingModSystem : ModSystem
     {
         base.Start(api);
         this.api = api;
+        TryLoadConfig();
+        
         api.RegisterBlockClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockCraftingSurface));
         api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockEntityCraftingSurface));
         api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(BlockBehaviorSpawnCraftingSurface));
         api.RegisterCollectibleBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(CollectibleBehaviorSpawnCraftingSurface));
+        
         Animator = new CraftingAnimator(api);
+        
         ApplyHarmonyPatches();
 
         api.RcLogger().Debug("Hello world!");
@@ -45,7 +49,6 @@ public class RknCraftingModSystem : ModSystem
 
     public override void StartClientSide(ICoreClientAPI api)
     {
-        //api.Event.LevelFinalize += InitCatalog;
         api.Input.RegisterHotKey("rkncrafting.start", Lang.Get("rkncrafting:hotkey-crafting"), GlKeys.AltLeft);
         Network = new RknCraftingNetwork(api, Mod.Info.ModID);
         api.Event.BlockChanged += UpdateCraftingSurface; // Why is this neccessary? Vanilla shelf seems to work just fine without.
@@ -53,25 +56,8 @@ public class RknCraftingModSystem : ModSystem
         api.Event.MouseUp += CheckResumeInteractions;
     }
 
-    private void CheckResumeInteractions(MouseEvent e)
-    {
-        if (e.Button == EnumMouseButton.Right)
-        {
-            BeginPauseInterations = 0;
-        }
-    }
-
-    private void CheckPauseInteractions(EnumEntityAction action, bool on, ref EnumHandling handled)
-    {
-        if (action == EnumEntityAction.InWorldRightMouseDown && (Environment.TickCount - BeginPauseInterations) < 2_000)
-        {
-            handled = EnumHandling.PreventDefault;
-        }
-    }
-
     public override void StartServerSide(ICoreServerAPI api)
     {
-        TryLoadConfig();
         InitCatalog();
         Network = new RknCraftingNetwork(api, Mod.Info.ModID);
         api.Event.PlayerJoin += SendConfig;
@@ -97,11 +83,6 @@ public class RknCraftingModSystem : ModSystem
                 }
                 return TextCommandResult.Success();
             });
-    }
-
-    private void SendConfig(IServerPlayer byPlayer)
-    {
-        Network.TransferConfig(Config, byPlayer);
     }
 
     public override void Dispose()
@@ -136,27 +117,21 @@ public class RknCraftingModSystem : ModSystem
 
     private void ApplyHarmonyPatches()
     {
-        // Use local config instead of server supplied one
-        RknCraftingConfig config = api.LoadModConfig<RknCraftingConfig>(Mod.Info.ModID + ".json");
-        if (config == null)
-        {
-            config = new RknCraftingConfig();
-        }
-
         harmony = new Harmony(Mod.Info.ModID);
         harmony.PatchAll();
 
-        if (config.DisableUICraftingGrid)
+        if (!LocalConfig.DisableUICraftingGrid)
         {
-            var original = typeof(GuiDialogInventory).DeclaredMethod("ComposeSurvivalInvDialog");
-            var prefix = typeof(GuiDialogInventoryPatch).DeclaredMethod("ComposeSurvivalInvDialogPrefix");
-            var original2 = typeof(GuiDialogInventory).DeclaredMethod("OnGuiClosed");
-            var prefix2 = typeof(GuiDialogInventoryPatch).DeclaredMethod("OnGuiClosedPrefix");
-
-            harmony.Patch(original, prefix: prefix);
-            harmony.Patch(original2, prefix: prefix2);
+            return;
         }
+        
+        MethodInfo? original = typeof(GuiDialogInventory).DeclaredMethod("ComposeSurvivalInvDialog");
+        MethodInfo? prefix = typeof(GuiDialogInventoryPatch).DeclaredMethod("ComposeSurvivalInvDialogPrefix");
+        MethodInfo? original2 = typeof(GuiDialogInventory).DeclaredMethod("OnGuiClosed");
+        MethodInfo? prefix2 = typeof(GuiDialogInventoryPatch).DeclaredMethod("OnGuiClosedPrefix");
 
+        harmony.Patch(original, prefix: prefix);
+        harmony.Patch(original2, prefix: prefix2);
     }
 
     private void TryLoadConfig()
@@ -164,24 +139,46 @@ public class RknCraftingModSystem : ModSystem
         string filename = Mod.Info.ModID + ".json";
         try
         {
-            RknCraftingConfig config = api.LoadModConfig<RknCraftingConfig>(filename);
-            if (config == null)
+            RknCraftingConfig config = api.LoadModConfig<RknCraftingConfig>(filename) ?? new RknCraftingConfig();
+            api.StoreModConfig(config, filename);
+            LocalConfig = config;
+            if (api.Side == EnumAppSide.Server)
             {
-                config = new RknCraftingConfig();
+                ServerConfig = config;                
             }
-            api.StoreModConfig<RknCraftingConfig>(config, filename);
-            Config = config;
         }
         catch (Exception e)
         {
             Mod.Logger.Error("Could not load config! Loading default settings instead.");
             Mod.Logger.Error(e);
-            Config = new RknCraftingConfig();
+            ServerConfig = new RknCraftingConfig();
+            LocalConfig = new RknCraftingConfig();
         }
     }
 
     public void InitCatalog()
     {
         RecipeCatalog = new RecipeCatalog(api);
+    }
+
+    private void CheckResumeInteractions(MouseEvent e)
+    {
+        if (e.Button == EnumMouseButton.Right)
+        {
+            BeginPauseInterations = 0;
+        }
+    }
+
+    private void CheckPauseInteractions(EnumEntityAction action, bool on, ref EnumHandling handled)
+    {
+        if (action == EnumEntityAction.InWorldRightMouseDown && (Environment.TickCount - BeginPauseInterations) < (LocalConfig.PauseInteractPostCraftSeconds * 1000))
+        {
+            handled = EnumHandling.PreventDefault;
+        }
+    }
+
+    private void SendConfig(IServerPlayer byPlayer)
+    {
+        Network.TransferConfig(ServerConfig, byPlayer);
     }
 }

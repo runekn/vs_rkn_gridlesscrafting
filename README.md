@@ -42,8 +42,8 @@ If there are enough remaining ingredients to continue crafting, then continuing 
 * The crafting surface can de destroyed to reclaim ingredients.
 * In order to not functions as a hyper-efficient ground storage, any crafting surface will auto delete itself after 2 minutes of inactivity (configurable).
 
-![Crafting a simple flint knife.](ReadmeAssets/demo1.gif)
-![Selecting and crafting multi-tool recipe on much more efficient surface.](ReadmeAssets/demo2.gif)
+<!-- ![Crafting a simple flint knife.](ReadmeAssets/demo1.gif) -->
+<!-- ![Selecting and crafting multi-tool recipe on much more efficient surface.](ReadmeAssets/demo2.gif) -->
 
 ### Crafting speed
 
@@ -69,16 +69,17 @@ In order to work with the mod, some recipes had to be adjusted. These are recipe
 
 File: `%AppData%/Roaming/VintagestoryData/ModConfig/rkncrafting.json`
 
-| Key   | Default | Description                                                                                              | Authorative side |
-|-------|---------|----------------------------------------------------------------------------------------------------------|-------------------|
-| BaseCraftingTimeSeconds | 1.0 | Base seconds to craft.                                                                                   | Server |
-| AutoDeleteTimeSeconds | 120 | How many seconds of inactivity it takes for crafting surface to self-delete.                             | Server |
-| ConsecutiveCraftingTimeModifier | 0.95 | Amount to decrease time to craft while continuing to hold right click.                                   | Server |
-| ConsecutiveCraftingTimeModifierMin | 0.5 | The minimum amount that crafting time can be decreased during consecutive crafting.                      | Server |
-| EnableBulkCrafting | false | Allows for holding SHIFT while crafting to craft as many items as possible at once.                      | Server |
-| BulkBaseCraftingTimeSeconds | 2.0 | Base seconds to craft if using bulk crafting.                                                            | Server |
-| DisableUICraftingGrid | true | Disables the inventory UI crafting grid.                                                                 | Client |
-| EnableGridless | false | Crafting surfaces no longer have grid. Recipe matching will not care about what slot ingredients are in. | Server |
+| Key   | Default | Description                                                                                                                                                                                                                                                  | Authorative side |
+|-------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|
+| `BaseCraftingTimeSeconds` | 1.0 | Base seconds to craft.                                                                                                                                                                                                                                       | Server |
+| `AutoDeleteTimeSeconds` | 120 | How many seconds of inactivity it takes for crafting surface to self-delete.                                                                                                                                                                                 | Server |
+| `ConsecutiveCraftingTimeModifier` | 0.95 | Amount to decrease time to craft while continuing to hold right click.                                                                                                                                                                                       | Server |
+| `ConsecutiveCraftingTimeModifierMin` | 0.5 | The minimum amount that crafting time can be decreased during consecutive crafting.                                                                                                                                                                          | Server |
+| `EnableBulkCrafting` | false | Allows for holding SHIFT while crafting to craft as many items as possible at once.                                                                                                                                                                          | Server |
+| `BulkBaseCraftingTimeSeconds` | 2.0 | Base seconds to craft if using bulk crafting.                                                                                                                                                                                                                | Server |
+| `DisableUICraftingGrid` | true | Disables the inventory UI crafting grid.                                                                                                                                                                                                                     | Client |
+| `EnableGridless` | false | Crafting surfaces no longer have grid. Recipe matching will not care about what slot ingredients are in.                                                                                                                                                     | Server |
+| `PauseInteractPostCraftSeconds` | 2.0 | Block all right click interactions after crafting finished for this amount of seconds. This is to prevent unintentional actions right after crafting has ended when you are still holding right click. Releasing right click will also unblock interactions. | Client |
 
 ## Required dependencies
 

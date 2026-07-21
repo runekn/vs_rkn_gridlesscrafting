@@ -67,7 +67,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     {
         base.Initialize(api);
         craftingSurfaceTimeModifier = api.World.BlockAccessor.GetBlock(Pos.DownCopy(1)).GetBehavior<BlockBehaviorSpawnCraftingSurface>().CraftingTimeModifier;
-        config = api.RcConfig();
+        config = api.RcServerConfig();
         craftingParams = null; // Override FromTreeAttributes because we don't want dummy craftingParams on server
     }
 
@@ -201,7 +201,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             ClientError("missingreciperequirement");
             return false;
         }
-        bool bulk = byPlayer.Entity.Controls.CtrlKey && Api.RcConfig().EnableBulkCrafting;
+        bool bulk = byPlayer.Entity.Controls.CtrlKey && Api.RcServerConfig().EnableBulkCrafting;
         craftingParams = new CraftingParams()
         {
             Player = byPlayer,

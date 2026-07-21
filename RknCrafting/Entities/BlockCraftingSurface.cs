@@ -29,7 +29,7 @@ public class BlockCraftingSurface : Block
             api.World.BlockAccessor.BreakBlock(abovePos, null);
             return false;
         }
-        if (api.RcConfig().EnableGridless)
+        if (api.RcServerConfig().EnableGridless)
         {
             if (!blockEntity.TryPutIngredient(slot, byPlayer))
             {
@@ -43,7 +43,7 @@ public class BlockCraftingSurface : Block
 
     public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos pos)
     {
-        if (api.RcConfig().EnableGridless)
+        if (api.RcServerConfig().EnableGridless)
         {
             return base.GetSelectionBoxes(blockAccessor, pos);
         }
