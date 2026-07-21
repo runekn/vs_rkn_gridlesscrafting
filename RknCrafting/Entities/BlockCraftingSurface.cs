@@ -105,7 +105,7 @@ public class BlockCraftingSurface : Block
         }
         if (be.IsCrafting(byPlayer))
         {
-            return be.OnCraftingStep(secondsUsed, world, byPlayer, blockSel);
+            return be.OnCraftingStep(secondsUsed, byPlayer);
         }
         return false;
     }
@@ -120,8 +120,23 @@ public class BlockCraftingSurface : Block
         }
         if (be.IsCrafting(byPlayer))
         {
-            be.CancelCrafting(world, byPlayer);
+            be.CancelCrafting(byPlayer);
         }
+    }
+
+    public override bool OnBlockInteractCancel(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, EnumItemUseCancelReason cancelReason)
+    {
+        BlockEntityCraftingSurface? be = GetBE(world, blockSel.Position);
+        if (be == null)
+        {
+            base.OnBlockInteractCancel(secondsUsed, world, byPlayer, blockSel, cancelReason);
+            return true;
+        }
+        if (be.IsCrafting(byPlayer))
+        {
+            be.CancelCrafting(byPlayer);
+        }
+        return true;
     }
 
     public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)

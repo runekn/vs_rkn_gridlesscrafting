@@ -23,7 +23,7 @@ internal class RecipeSelectionDialog : GuiDialog
     
     public bool TryOpen(ScanResult[] recipes, Action<int> selected)
     {
-        recipeInventory = new RecipeSelectionInventory(capi, recipes, selected);
+        recipeInventory = new RecipeSelectionInventory(capi, recipes, i => selected(recipes[i].Wrapper.Id));
         return TryOpen();
     }
 

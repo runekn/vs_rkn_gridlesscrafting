@@ -96,13 +96,15 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             sb.AppendLine();
         }
         sb.AppendLine();
-        if (validRecipes is { Count: > 0 })
+        var scanResult = GetSelectedRecipe();
+        if (scanResult == null)
         {
-            sb.Append("Selected: ").AppendLine(validRecipes[selectedRecipe].Output?.GetName());
-            if (validRecipes.Count > 1)
-            {
-                sb.Append(validRecipes.Count - 1).Append(" more valid recipes");
-            }
+            return;
+        }
+        sb.Append("Selected: ").AppendLine(scanResult.Output?.GetName());
+        if (validRecipes.Count > 1)
+        {
+            sb.Append(validRecipes.Count - 1).Append(" more valid recipes");
         }
     }
 
@@ -155,7 +157,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
 
     public bool IsCrafting(IPlayer byPlayer)
     {
-        return craftingParams?.Player == byPlayer;
+        return craftingParams?.Player.ClientId == byPlayer.ClientId;
     }
 
     public void ClientStartedCrafting(IPlayer byPlayer, EnumCraftingAnimation animation, float recipeModifier, int recipe, bool bulk, float nextCraftingTime, BlockFacing? blockFacing)
@@ -179,16 +181,20 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         {
             return true;
         }
-        if (craftingParams != null || selectedRecipe == -1)
+
+        if (craftingParams != null)
         {
-            if (craftingParams != null && !IsCrafting(byPlayer))
+            if (!IsCrafting(byPlayer))
             {
                 ClientError("surfacealreadycrafting");
             }
             return false;
         }
-
-        ScanResult result = validRecipes[selectedRecipe];
+        ScanResult? result = GetSelectedRecipe();
+        if (result == null)
+        {
+            return false;
+        }
         RecipeInputSlots inputSlots = GetCraftingInputSlots(byPlayer, lastFacing);
         if (inputSlots == null || !Api.RCRecipeCatalog().MatchesRecipe(inputSlots, result.Wrapper, config.EnableGridless, byPlayer))
         {
@@ -211,7 +217,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         return true;
     }
 
-    public bool OnCraftingStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+    public bool OnCraftingStep(float secondsUsed, IPlayer byPlayer)
     {
         timeoutTimer = 0;
         if (Api.Side != EnumAppSide.Server || craftingParams == null)
@@ -232,7 +238,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             craftingParams.Amount++;
             craftingParams.NextCraftingTime = secondsUsed + GetCraftingTime();
 
-            CreateOutput(world);
+            CreateOutput();
 
             // Continue crafting if possible
             RecipeInputSlots inputSlots = GetCraftingInputSlots(craftingParams.Player, craftingParams.Facing);
@@ -258,7 +264,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         return true;
     }
 
-    public void CancelCrafting(IWorldAccessor world, IPlayer byPlayer)
+    public void CancelCrafting(IPlayer byPlayer)
     {
         timeoutTimer = 0;
         if (craftingParams?.Player?.ClientId != byPlayer.ClientId)
@@ -398,7 +404,7 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
             .TryOpen(validRecipes.ToArray(), i =>
             {
                 selectedRecipe = i;
-                Api.RCLogger().Debug("selected: {0} {1}", i, validRecipes[i].Wrapper.RecipeWithTools.Name);
+                Api.RCLogger().Debug("selected: {0} {1}", i, GetSelectedRecipe().Wrapper.RecipeWithTools.Name);
                 recipeSelectionDialog.TryClose();
             });
     }
@@ -469,14 +475,17 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
         }
         List<ScanResult> recipes = Api.RCRecipeCatalog().GetValidRecipes(inputSlots, config.EnableGridless, capi.World.Player);
         validRecipes = recipes;
-        selectedRecipe = -1;
-        if (recipes.Count > 0)
+        if (recipes.Count == 0)
         {
-            selectedRecipe = 0;
+            selectedRecipe = -1;
+        }
+        else if (GetSelectedRecipe() == null)
+        {
+            selectedRecipe = validRecipes.First().Wrapper.Id;
         }
     }
 
-    private void CreateOutput(IWorldAccessor world)
+    private void CreateOutput()
     {
         if (craftingParams == null)
         {
@@ -685,9 +694,16 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     private void ResetState()
     {
         craftingParams = null;
-        selectedRecipe = -1;
         dirtyRecipes = true;
         MarkDirty();
+    }
+
+    private ScanResult? GetSelectedRecipe()
+    {
+        if (selectedRecipe == -1 || validRecipes?.Count == 0)
+            return null;
+
+        return validRecipes.Where(r => r.Wrapper.Id == selectedRecipe).First();
     }
 
     private void ClientError(string error)

@@ -9,6 +9,6 @@
     "description": "Generic gridless crafting system that completely replaces all UI grid recipes.",
     "version": "0.2.0",
     "dependencies": {
-        "game": "1.22.3"
+        "game": "1.22.4"
     }
 }
