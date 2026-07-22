@@ -2,6 +2,9 @@
 
 Generic crafting system that completely replaces the UI grid with a more immersive mechanic.
 
+This mod does not introduce any new *recipe-specific* crafting mechanics.
+The intention of this mod is instead to create a *generic* crafting system that can work for any and all grid recipes, out of the box.  
+
 ## Instructions
 
 #### Add ingredients
@@ -37,6 +40,16 @@ If a recipe requires tools, then these must be held in your hands while trying t
 
 If there are enough remaining ingredients to continue crafting, then continuing to hold rick click will continue crafting at a slightly faster pace.
 
+#### Multi-stage crafting
+
+In case a recipe requires more tools than can be held at one time, you can start crafting with any of the required tools. 
+Instead of producing the recipe output, it will instead produce an Unfinished Craft item. 
+This item can be placed on a new crafting surface where you can then proceed to use one or more of the remaining tool requirements in the recipe.
+Only once all required tool has been used will it produce the final recipe output.
+
+Clicking the handbook hotkey on an Unfinished Craft itemslot will open the handbook page for the recipe output. 
+Combining this with list of used tools in the itemslot hover description, allows you to see what tools remains to be used.  
+
 #### Other
 
 * The crafting surface can de destroyed to reclaim ingredients.
@@ -57,12 +70,6 @@ For `recipeCraftingTimeModifier` the only recipes currently that modifies this a
 
 ### Adjusted recipes
 
-In order to work with the mod, some recipes had to be adjusted. These are recipes that in vanilla require more than two tools, or combination of tools that did not fit the animation set.
-
-* All figureheads have reduced required tools from four to two.
-* Many mechanical parts have reduced required tools to two.
-* Cabinets no longer require hammer.
-* Grind stone wheel no longer require hammer.
 * Plank blocks, slabs, and stairs now requires hammer. Just because I wanted more recipes to have tool requirements now that it plays animations. Though I disabled durability cost at least.
 
 ## Config
@@ -89,6 +96,8 @@ File: `%AppData%/Roaming/VintagestoryData/ModConfig/rkncrafting.json`
 
 Fully safe to add to existing save. It is recommended that all crafting surfaces are deleted before removing from existing save. Though given the auto-delete feature this should be trivial.
 
+Unfinished crafting items may break after game update or installing/updating mods that add grid recipes. It is recommended that these are only temporary.
+
 Any mod that disables grid recipes will also disable for this mod.
 
 [Immersive Inventory Slots](https://mods.vintagestory.at/show/mod/59074) and this mod will override each other's UI changes if playing with DisableUICraftingGrid=true. To hide the grid again you must use HideCraftingGrid in that mod's config.
@@ -114,9 +123,10 @@ Any mod that disables grid recipes will also disable for this mod.
 
 ## Known issues
 
-* If you craft a block that uses up the last ingredients which makes crafting surface delete itself, and you are still holding right click, you may place the output immediately. This is quite annoying.
+* Existing unfinished crafting items may break after updating game or installing/updating mods. This is due to their reference to recipe that is not so resilient. It should not crash the game. Just makes you unable to complete the craft or recover the ingredients. In rare cases it may allow you to craft, but the output is different.
 
 ## Major release changelog
 
+* 0.3.0: Support multi-stage crafting for recipes with tool requirements that can not be held in one go. Move recipe selection hotkey to F (Tool mode selection). Support adding tool as ingredient, for mod recipes that consumes tools as simple ingredients. 
 * 0.2.0: Added grid to crafting surface. Added new recipe selection UI. Recipes are now scanned on client instead of server. Tools are no longer ignored during recipe scan. Ability to take back ingredients.
 * 0.1.0: Initial pre-release
