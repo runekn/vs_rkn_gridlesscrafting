@@ -3,6 +3,9 @@
     "class": "rkncrafting.craftingsurface",
 	"entityClass": "rkncrafting.craftingsurface",
 	"replaceable": 900,
+	"attributes": {
+		"canChisel": false
+	},
 	"resistance": 0.2,
 	"lightAbsorption": 0,
 	"sidesolid": {
