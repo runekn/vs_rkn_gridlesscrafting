@@ -6,6 +6,7 @@ using RKN.Crafting.Patches;
 using RknCrafting;
 using System;
 using System.Reflection;
+using RknCrafting.Entities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -22,7 +23,7 @@ public class RknCraftingModSystem : ModSystem
     private Harmony harmony;
 
     public RknCraftingNetwork Network { get; internal set; }
-    public RecipeCatalog RecipeCatalog { get; internal set; }
+    public RecipeService RecipeService { get; internal set; }
     public CraftingAnimator Animator { get; internal set; }
     public RknCraftingConfig ServerConfig { get; internal set; }
     public RknCraftingConfig LocalConfig { get; internal set; }
@@ -38,8 +39,9 @@ public class RknCraftingModSystem : ModSystem
         api.RegisterBlockClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockCraftingSurface));
         api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockEntityCraftingSurface));
         api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(BlockBehaviorSpawnCraftingSurface));
+        api.RegisterItemClass(Mod.Info.ModID + ".unfinishedcraft", typeof(ItemUnfinishedCraft));
         api.RegisterCollectibleBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(CollectibleBehaviorSpawnCraftingSurface));
-        
+
         Animator = new CraftingAnimator(api);
         
         ApplyHarmonyPatches();
@@ -158,7 +160,7 @@ public class RknCraftingModSystem : ModSystem
 
     public void InitCatalog()
     {
-        RecipeCatalog = new RecipeCatalog(api);
+        RecipeService = new RecipeService(api);
     }
 
     private void CheckResumeInteractions(MouseEvent e)

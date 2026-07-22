@@ -1,5 +1,6 @@
 {
 	"block-craftingsurface": "Crafting Surface",
+	"item-unfinishedcraft": "Unfinished Craft",
 	"hotkey-crafting": "RKN Crafting modifier",
 	"error-surfacefull": "Crafting surface is full",
 	"error-surfaceempty": "Slot is empty",

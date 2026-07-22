@@ -106,7 +106,7 @@ public class RknCraftingNetwork
             Animation = craftingParams.Animation,
             NextCraftingTime = craftingParams.NextCraftingTime,
             Bulk = craftingParams.Bulk,
-            Recipe = craftingParams.Recipe.Wrapper.Id,
+            Recipe = craftingParams.Recipe.Id,
             RecipeCraftingTimeModifier = craftingParams.RecipeCraftingTimeModifier,
             Facing = craftingParams.Facing?.Flag ?? -1
         });

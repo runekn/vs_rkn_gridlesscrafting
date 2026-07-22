@@ -1,10 +1,7 @@
-﻿using RKN.Crafting;
-using RKN.Crafting.Animation;
+﻿using RKN.Crafting.Animation;
 using RKN.Crafting.Network;
 using RknCrafting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
@@ -12,9 +9,9 @@ namespace RKN.Crafting;
 
 public static class CoreApiExtensions
 {
-    public static RecipeCatalog RcRecipeCatalog(this ICoreAPI api)
+    public static RecipeService RcRecipeService(this ICoreAPI api)
     {
-        return api.ModLoader.GetModSystem<RknCraftingModSystem>().RecipeCatalog;
+        return api.ModLoader.GetModSystem<RknCraftingModSystem>().RecipeService;
     }
 
     public static RknCraftingNetwork RcNetwork(this ICoreAPI api)

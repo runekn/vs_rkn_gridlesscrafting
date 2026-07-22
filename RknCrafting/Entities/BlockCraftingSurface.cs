@@ -6,16 +6,16 @@ namespace RKN.Crafting.Entities;
 
 public class BlockCraftingSurface : Block
 {
+    private static readonly AssetLocation Asset = new("rkncrafting", "craftingsurface");
 
     public static bool TryPlace(ICoreAPI api, IPlayer? byPlayer, BlockPos blockPos, ItemSlot slot)
     {
-        BlockCraftingSurface? block = api.World.GetBlock(new AssetLocation("rkncrafting:craftingsurface")) as BlockCraftingSurface;
-        if (block == null)
+        if (api.World.GetBlock(Asset) is not BlockCraftingSurface block)
         {
             api.RcLogger().Error("Crafting block did not spawn with BlockEntityCraftingSurface!");
             return false;
         }
-        api.RcLogger().Debug("Trying to place crafting block at " + blockPos.ToString());
+        api.RcLogger().Debug("Trying to place crafting block at " + blockPos);
         BlockPos abovePos = blockPos.UpCopy(1);
         if (api.World.BlockAccessor.GetBlock(abovePos).Replaceable < 6000)
         {
