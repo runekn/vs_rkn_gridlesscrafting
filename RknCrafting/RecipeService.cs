@@ -526,7 +526,7 @@ public class GridRecipeWrapper
         for (int i = 0; i < RecipeWithoutTools.ResolvedIngredients!.Length; i++)
         {
             CraftingRecipeIngredient? ingredient = RecipeWithoutTools.ResolvedIngredients[i];
-            if (ingredient != null && !ingredient.Consume)
+            if (ingredient is { Consume: false, Code: { Path: "*", Domain: "*" } })
             {
                 RecipeWithoutTools.ResolvedIngredients[i] = null;
                 ToolIngredients.Add(ingredient);
