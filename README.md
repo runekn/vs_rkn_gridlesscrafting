@@ -2,8 +2,10 @@
 
 Generic crafting system that completely replaces the UI grid with a more immersive mechanic.
 
+![thumbnail](ReadmeAssets/thumbnail_small.png)
+
 This mod does not introduce any new *recipe-specific* crafting mechanics.
-The intention of this mod is instead to create a *generic* crafting system that can work for any and all grid recipes, out of the box.  
+The intention of this mod is instead to create a *generic* crafting system that can work for any and all grid recipes, out of the box.
 
 ## Instructions
 
