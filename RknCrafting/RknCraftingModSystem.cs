@@ -5,8 +5,8 @@ using RKN.Crafting.Network;
 using RKN.Crafting.Patches;
 using RknCrafting;
 using System;
+using System.Linq;
 using System.Reflection;
-using System.Xml.Schema;
 using RknCrafting.Entities;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -64,6 +64,15 @@ public class RknCraftingModSystem : ModSystem
         api.Event.MouseUp += CheckResumeInteractions;
 
         api.Event.IsPlayerReady += AddRecipeSelectionHandler; // Add as late as possible since the vanilla handler is added at OnBlockTexturesLoaded
+
+        if (!GuiDialogTransformEditor.extraTransforms.Any(c => c.AttributeName.Equals("craftingIngredientTransform")))
+        {
+            GuiDialogTransformEditor.extraTransforms.Add(new TransformConfig()
+            {
+                AttributeName = "craftingIngredientTransform",
+                Title = Lang.Get("rkncrafting:transform-craftingIngredientTransform")
+            });
+        }
     }
 
     private bool AddRecipeSelectionHandler(ref EnumHandling handling)

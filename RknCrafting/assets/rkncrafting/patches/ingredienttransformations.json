@@ -99,21 +99,10 @@
     "path": "/attributes",
     "value": {
       "craftingIngredientTransform": {
-        "translation": {
-          "x": -0.1,
-          "y": -0.04,
-          "z": 0
-        },
-        "rotation": {
-          "x": -90,
-          "y": 0,
-          "z": -44
-        },
-        "origin": {
-          "x": 0.6,
-          "y": 0.05,
-          "z": 0.5
-        }
+        "translation": { "x": -0.05, "y": -0.04, "z": 0 },
+        "rotation": { "x": -90, "y": 0, "z": -44 },
+        "origin": { "x": 0.6, "y": 0.05, "z": 0.5 },
+        "scale": 0.69
       }
     }
   },
@@ -205,24 +194,22 @@
     "path": "/attributes",
     "value": {
       "craftingIngredientTransform": {
-        "craftingIngredientTransform": {
-          "translation": {
-            "x": -0.48,
-            "y": 0,
-            "z": 0
-          },
-          "rotation": {
-            "x": 0,
-            "y": -46,
-            "z": 0
-          },
-          "origin": {
-            "x": 0.95,
-            "y": 0,
-            "z": 0.5
-          },
-          "scale": 0.84
-        }
+        "translation": {
+          "x": -0.48,
+          "y": 0,
+          "z": 0
+        },
+        "rotation": {
+          "x": 0,
+          "y": -46,
+          "z": 0
+        },
+        "origin": {
+          "x": 0.95,
+          "y": 0,
+          "z": 0.5
+        },
+        "scale": 0.84
       }
     }
   },
@@ -272,6 +259,28 @@
           "z": 0
         },
         "scale": 0.5
+      }
+    }
+  },
+  {
+    "file": "game:itemtypes/tool/hammer",
+    "op": "addmerge",
+    "path": "/attributes",
+    "value": {
+      "craftingIngredientTransform": {
+        "translation": { "x": -0.06, "y": -0.47, "z": 0 },
+        "scale": 0.45
+      }
+    }
+  },
+  {
+    "file": "game:itemtypes/tool/saw",
+    "op": "addmerge",
+    "path": "/attributes",
+    "value": {
+      "craftingIngredientTransform": {
+        "translation": { "x": -0.03, "y": -0.46, "z": 0 },
+        "scale": 0.38
       }
     }
   }
