@@ -454,7 +454,7 @@ public class RecipeService
                 }
             }
             ItemStack outputStack = output.Clone();
-            outputStack.StackSize = amount;
+            outputStack.StackSize *= amount;
             return outputStack;
         }
     }
