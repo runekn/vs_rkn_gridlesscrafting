@@ -181,7 +181,7 @@ public class RecipeService
         {
             return true;
         }
-        bool matchedAny = false;
+        bool matchedPrimary = false;
         for (int index = 0; index < toolIngredients.Count; index++)
         {
             if (usedTools?[index] != null)
@@ -191,7 +191,7 @@ public class RecipeService
             CraftingRecipeIngredient ingredient = toolIngredients[index];
             if (IngredientSatisfied(ingredient, inputSlots.PrimaryTool?.Itemstack, null))
             {
-                matchedAny = true;
+                matchedPrimary = true;
                 if (updateUsedTools && usedTools != null)
                 {
                     usedTools[index] = inputSlots.PrimaryTool!.Itemstack!.Collectible.Code;
@@ -199,7 +199,6 @@ public class RecipeService
             }
             else if (IngredientSatisfied(ingredient, inputSlots.OffhandTool?.Itemstack, null))
             {
-                matchedAny = true;
                 if (updateUsedTools && usedTools != null)
                 {
                     usedTools[index] = inputSlots.OffhandTool!.Itemstack!.Collectible.Code;
@@ -207,7 +206,7 @@ public class RecipeService
             }
         }
 
-        return matchedAny;
+        return matchedPrimary;
     }
 
     private bool MatchesRecipeGridless(RecipeInputSlots inputSlots, GridRecipe recipe)
@@ -424,8 +423,8 @@ public class RecipeService
         {
             get
             {
-                JsonObject attributes = finalOutput.Collectible.Attributes;
-                return attributes["craftingTimeModifier"].AsFloat(1f);
+                JsonObject? attributes = wrapper.RecipeWithTools.Attributes;
+                return attributes == null ? 1f : attributes["craftingTimeModifier"].AsFloat(1f);
             }
         }
 
