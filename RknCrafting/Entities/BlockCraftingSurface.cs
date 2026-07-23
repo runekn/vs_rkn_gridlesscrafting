@@ -10,7 +10,7 @@ public class BlockCraftingSurface : Block
 
     private WorldInteraction[] interactions;
 
-    public static bool TryPlace(ICoreAPI api, IPlayer? byPlayer, BlockPos blockPos, ItemSlot slot)
+    public static bool TryPlace(ICoreAPI api, IPlayer? byPlayer, BlockPos blockPos, ItemSlot slot, float craftingTimeModifier = 1f)
     {
         if (api.World.GetBlock(Asset) is not BlockCraftingSurface block)
         {
@@ -31,6 +31,7 @@ public class BlockCraftingSurface : Block
             api.World.BlockAccessor.BreakBlock(abovePos, null);
             return false;
         }
+        blockEntity.CraftingSurfaceTimeModifier = craftingTimeModifier;
         if (api.RcServerConfig().EnableGridless)
         {
             if (slot.Itemstack?.Item?.Tool == null && !blockEntity.TryPutIngredient(slot, byPlayer))

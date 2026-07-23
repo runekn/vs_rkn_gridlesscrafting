@@ -42,6 +42,7 @@ public class RknCraftingModSystem : ModSystem
         api.RegisterBlockClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockCraftingSurface));
         api.RegisterBlockEntityClass(Mod.Info.ModID + ".craftingsurface", typeof(BlockEntityCraftingSurface));
         api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(BlockBehaviorSpawnCraftingSurface));
+        api.RegisterBlockBehaviorClass(Mod.Info.ModID + ".spawnchiselcraftingsurface", typeof(BlockBehaviorChiselSpawnCraftingSurface));
         api.RegisterItemClass(Mod.Info.ModID + ".unfinishedcraft", typeof(ItemUnfinishedCraft));
         api.RegisterCollectibleBehaviorClass(Mod.Info.ModID + ".spawncraftingsurface", typeof(CollectibleBehaviorSpawnCraftingSurface));
 

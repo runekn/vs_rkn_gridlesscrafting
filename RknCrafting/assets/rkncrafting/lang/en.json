@@ -6,6 +6,7 @@
 	"error-surfaceempty": "Slot is empty",
 	"error-surfacealreadycrafting": "Someone is already crafting here!",
 	"error-missingreciperequirement": "Missing requirement for crafting",
+	"error-unsuitablesurface": "Surface not suitable for crafting",
 	"help-craft": "Craft",
 	"help-craftbulk": "Craft bulk",
 	"help-addingredient": "Add ingredient",

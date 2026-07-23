@@ -20,8 +20,8 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     // Initialized fields
     private int slotCount = 9;
     private InventoryGeneric inventory;
-    private float craftingSurfaceTimeModifier = 1.0f;
     private RknCraftingConfig config;
+    internal float CraftingSurfaceTimeModifier = 1.0f;
 
     public override InventoryBase Inventory => inventory;
     public override string InventoryClassName => "craftingsurface";
@@ -65,7 +65,6 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     public override void Initialize(ICoreAPI api)
     {
         base.Initialize(api);
-        craftingSurfaceTimeModifier = api.World.BlockAccessor.GetBlock(Pos.DownCopy(1)).GetBehavior<BlockBehaviorSpawnCraftingSurface>().CraftingTimeModifier;
         config = api.RcServerConfig();
         craftingParams = null; // Override FromTreeAttributes because we don't want dummy craftingParams on server
     }
@@ -467,8 +466,8 @@ public class BlockEntityCraftingSurface : BlockEntityDisplay
     {
         float @base = craftingParams!.Bulk ? config.BulkBaseCraftingTimeSeconds : config.BaseCraftingTimeSeconds;
         float consecutiveModifer = craftingParams.Amount == 0 ? 1 : Math.Max(config.ConsecutiveCraftingTimeModifierMin, (float)Math.Pow(config.ConsecutiveCraftingTimeModifier, craftingParams.Amount));
-        float r = @base * craftingSurfaceTimeModifier * craftingParams.RecipeCraftingTimeModifier * consecutiveModifer;
-        Api.RcLogger().Debug("Next time to craft: {0} * {1} * {2} * {3} = {4}", @base, craftingSurfaceTimeModifier, craftingParams.RecipeCraftingTimeModifier, consecutiveModifer, r);
+        float r = @base * CraftingSurfaceTimeModifier * craftingParams.RecipeCraftingTimeModifier * consecutiveModifer;
+        Api.RcLogger().Debug("Next time to craft: {0} * {1} * {2} * {3} = {4}", @base, CraftingSurfaceTimeModifier, craftingParams.RecipeCraftingTimeModifier, consecutiveModifer, r);
         return r;
     }
 

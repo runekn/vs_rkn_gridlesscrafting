@@ -122,10 +122,7 @@
 		"path": "/behaviors",
 		"value": [
 			{
-				"name": "rkncrafting.spawncraftingsurface",
-				"properties": {
-					"craftingTimeModifier": 0.8
-				}
+				"name": "rkncrafting.spawnchiselcraftingsurface"
 			}
 		]
 	},
