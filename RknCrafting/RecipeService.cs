@@ -543,7 +543,7 @@ public class GridRecipeWrapper
 
     private void CorrectRecipeDimensions()
     {
-        if (ToolIngredients.Count == 0)
+        if (ToolIngredients.Count == 0 || RecipeWithoutTools.Shapeless)
         {
             return;
         }
