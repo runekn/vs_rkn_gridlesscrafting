@@ -118,14 +118,6 @@ Recipes can have the attribute `craftingTimeModifier` to edit how fast it is to 
 ## Wishlist
 
 * More and better animations based on tools and recipe
-* Particles while crafting
-	* Estimated difficulty: MEDIUM
-* Particles per item type
-	* Estimated difficulty: MEDIUM-HARD (though can be done one recipe at a time)
-* Sounds while crafting
-	* Estimated difficulty: MEDIUM
-* Sounds per item type
-	* Estimated difficulty: MEDIUM-HARD (though can be done one recipe at a time)
 * Support adding ingredient while in mouse mode
 	* Estimated difficulty: MEDIUM
 
